@@ -3,7 +3,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Flask-Python-blue.svg?logo=flask" />
   <img src="https://img.shields.io/badge/MySQL-DB-4479A1?logo=mysql&logoColor=white" />
-  <img src="https://img.shields.io/badge/Google%20OAuth-Authentication-F4B400?logo=google&logoColor=white" />
 </p>
 
 ---
@@ -65,7 +64,6 @@ All forms (login, profile editing, verification) use modal popups for seamless U
 | **Framework**      | <img src="https://img.icons8.com/ios-filled/50/000000/flask.png" height="20"/> Flask |
 | **Frontend**       | <img src="https://img.icons8.com/color/48/000000/html-5--v1.png" height="20"/> HTML<br><img src="https://img.icons8.com/color/48/000000/css3.png" height="20"/> CSS<br><img src="https://img.icons8.com/color/48/000000/javascript--v1.png" height="20"/> JavaScript |
 | **Database**       | <img src="https://img.icons8.com/fluency/48/000000/mysql-logo.png" height="20"/> MySQL |
-| **Authentication** | <img src="https://img.icons8.com/color/48/000000/google-logo.png" height="20"/> Google OAuth 2.0 |
 | **AI & Data** | <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Pandas_logo.svg" height="20"/> Pandas<br><img src="https://upload.wikimedia.org/wikipedia/commons/3/31/NumPy_logo_2020.svg" height="20"/> NumPy |
 | **IDE**            | <img src="https://img.icons8.com/color/48/000000/visual-studio-code-2019.png" height="20"/> VS Code |
 | **Version Control**| <img src="https://img.icons8.com/color/48/000000/git.png" height="20"/> Git<br><img src="https://img.icons8.com/ios-glyphs/30/github.png" height="20"/> GitHub |

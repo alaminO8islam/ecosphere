@@ -1,11 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
-print("OAUTHLIB_INSECURE_TRANSPORT =", os.environ.get('OAUTHLIB_INSECURE_TRANSPORT'))
-
 
 import os
 from app import create_app

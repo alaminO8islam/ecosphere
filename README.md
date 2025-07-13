@@ -70,7 +70,7 @@ All forms (login, profile editing, verification) use modal popups for seamless U
 
 ---
 
-### ## 📁 Project Structure
+### 📁 Project Structure
 
 ```
 ├── .venv/                      # Virtual environment (hidden)

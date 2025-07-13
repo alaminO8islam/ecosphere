@@ -1,0 +1,7 @@
+flask
+flask_sqlalchemy
+flask_cors
+flask_dance[google]  # For Google OAuth
+python-dotenv
+pymysql
+requests  # For weather API requests

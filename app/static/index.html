@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSphere – Harmony Between Sun, Earth & You</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #FF9F1C; /* Sun orange */
+      --primary-light: #FFBF69; /* Lighter sun */
+      --primary-dark: #E2711D; /* Sunset orange */
+      --secondary: #2EC4B6; /* Ocean teal */
+      --secondary-dark: #20A39E;
+      --accent: #CBF3F0; /* Light teal */
+      --text: #333333;
+      --text-light: #5f6368;
+      --bg: #FDFFF7; /* Creamy white */
+      --card: #FFFFFF;
+      --sidebar: #E8F5E9;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --glass-bg: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif; /* Replace any other font-family declarations */
+      transition: all 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Poppins', sans-serif; /* Remove Playfair Display */
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    /* Navigation */
+    nav {
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: var(--primary-dark);
+    }
+
+    .logo i {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 0;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .btn-login {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.6rem 1.8rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 159, 28, 0.3);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 159, 28, 0.4);
+      background-color: var(--primary-light);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), 
+                  url('https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      height: 70vh;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 0 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(255, 191, 105, 0.2) 0%, transparent 70%);
+      animation: pulse 15s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.3; }
+      100% { transform: scale(1.1); opacity: 0.5; }
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 1s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      max-width: 800px;
+      margin-bottom: 3rem;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 1s ease 0.2s forwards;
+      opacity: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      animation: fadeInUp 1s ease 0.4s forwards;
+      opacity: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 159, 28, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 159, 28, 0.4);
+      background-color: var(--primary-light);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid white;
+      backdrop-filter: blur(5px);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
+
+    /* Features Section */
+    .section {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 4rem;
+      color: var(--text);
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background-color: var(--card);
+      border-radius: 1rem;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 8px 20px rgba(255, 159, 28, 0.3);
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .feature-card p {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Impact Section */
+    .impact {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                  url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: white;
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .impact::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(transparent, var(--bg));
+      z-index: 1;
+    }
+
+    .impact .section-title {
+      color: white;
+      position: relative;
+      z-index: 2;
+    }
+
+    .impact p {
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .impact-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-item {
+      background-color: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      padding: 2rem;
+      border: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Articles Section */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .article-card {
+      background-color: var(--card);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .article-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .article-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.5s ease;
+    }
+
+    .article-card:hover .article-image {
+      transform: scale(1.05);
+    }
+
+    .article-content {
+      padding: 1.5rem;
+    }
+
+    .article-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .article-excerpt {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .article-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    /* Sun Path Animation */
+    .sun-path {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .sun {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, var(--primary) 0%, rgba(255, 159, 28, 0.5) 70%, transparent 100%);
+      border-radius: 50%;
+      filter: blur(10px);
+      animation: sunPath 20s linear infinite;
+    }
+
+    @keyframes sunPath {
+      0% { transform: translate(-100px, 100px); opacity: 0; }
+      10% { opacity: 0.5; }
+      50% { transform: translate(calc(50vw - 50px), calc(30vh - 50px)); opacity: 1; }
+      90% { opacity: 0.5; }
+      100% { transform: translate(calc(100vw + 100px), 100px); opacity: 0; }
+    }
+
+    /* Rays */
+    .rays {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 191, 105, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulseRays 4s infinite alternate;
+    }
+
+    @keyframes pulseRays {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+      100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.1; }
+    }
+
+    /* Contact Section */
+    .contact {
+      background: linear-gradient(135deg, var(--accent), var(--bg));
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 191, 105, 0.1) 0%, transparent 70%);
+      z-index: 0;
+    }
+
+    .contact .section-title {
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact p {
+      max-width: 600px;
+      margin: 1rem auto 2rem;
+      color: var(--text-light);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--secondary-dark);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background-color: var(--card);
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: color 0.3s ease;
+      z-index: 2;
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-btn {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .modal-btn:hover {
+      animation: subtleShake 0.5s ease-in-out, 
+      smoothZoom 0.3s ease-out forwards;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+
+    .modal-btn.google {
+      background-color: #4285F4;
+      color: white;
+    }
+
+    .modal-btn.google:hover {
+      background-color: #3367D6;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);
+    }
+
+    .modal-btn.guest {
+  background-color: var(--card);
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  /* Remove any pointer-events: none if present */
+  pointer-events: auto !important;
+}
+
+/* Guest button specific hover */
+.modal-btn.guest:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background-color: var(--accent);
+}
+
+    .modal-btn.guest:hover:not(:disabled) {
+      background-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .modal-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .modal-btn.guest[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--card);
+}
+
+    /* Add this if not already present */
+.modal-buttons a,
+.modal-buttons button {
+  display: none; /* Keep hidden initially */
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Added for fade-in */
+  transform: translateY(10px); /* Added for slide-up effect */
+  transition: all 0.3s ease-out; /* Smooth transition */
+  pointer-events: none; /* Prevent clicks during hidden state */
+}
+
+/* Add this new rule for when buttons become active */
+.modal-buttons a.active,
+.modal-buttons button.active {
+  display: flex; /* Show element */
+  opacity: 1; /* Fully visible */
+  transform: translateY(0); /* Final position */
+  pointer-events: auto; /* Enable clicks */
+}
+
+    .terms-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 1.5rem 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .terms-checkbox input {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    .terms-checkbox label {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .terms-checkbox a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .terms-checkbox a:hover {
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        height: 60vh;
+        min-height: 400px;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.2rem;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .btn-primary, .btn-secondary {
+        width: 100%;
+      }
+
+      .impact-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .impact-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Fallback for browsers that don't support backdrop-filter */
+    @supports not (backdrop-filter: blur(10px)) {
+      .stat-item {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    /* Gmail-style email button */
+.email-container {
+  margin: 1.5rem auto;
+  max-width: 400px;
+}
+
+.email-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  color: #5f6368;
+  padding: 12px 24px;
+  border-radius: 24px;
+  text-decoration: none;
+  font-weight: 500;
+  border: 1px solid #dadce0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.email-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border-color: #d2e3fc;
+  background: #f6f9ff;
+}
+
+.email-button i {
+  color: #EA4335; /* Gmail red */
+  font-size: 1.2rem;
+}
+
+.response-time {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Terms Modal Styling */
+.terms-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 15px;
+  color: var(--text);
+}
+
+.terms-content h3 {
+  margin-top: 1.5rem;
+  color: var(--primary-dark);
+}
+
+.terms-content ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.terms-content li {
+  margin-bottom: 0.5rem;
+}
+
+.modal-back-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: transparent;
+  border: none;
+  color: #333; /* Charcoal color */
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.modal-back-btn:hover {
+  color: #222; /* Slightly darker on hover */
+  transform: translateX(-3px); /* Subtle move effect */
+}
+
+.modal-back-btn:active {
+  transform: translateX(-5px); /* Pressed effect */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Add these new keyframes */
+@keyframes subtleShake {
+  0%, 100% { transform: translateX(0) scale(1); }
+  25% { transform: translateX(-1px) scale(1.02); }
+  50% { transform: translateX(1px) scale(1.02); }
+  75% { transform: translateX(1px) scale(1.03); }
+}
+
+@keyframes smoothZoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="logo">
+      <i class="fas fa-leaf"></i>
+      <span>EcoSphere</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#impact">Impact</a>
+      <a href="#articles">Learn</a>
+      <a href="#contact">Connect</a>
+    </div>
+    <button id="loginBtn" class="btn-login">Login</button>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="sun-path">
+      <div class="sun"></div>
+    </div>
+    <h1>Harmony Between Sun, Earth & You</h1>
+    <p>Discover the perfect balance of sunlight exposure and environmental impact with our intelligent tracking system.</p>
+    <div class="hero-buttons">
+      <button id="getStartedBtn" class="btn-primary">Start Your Journey</button>
+      <a href="#features" class="btn-secondary">Learn More</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="section">
+    <h2 class="section-title">Your Personal Sun-Earth Connection</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-sun"></i>
+        </div>
+        <h3>Sunlight Optimization</h3>
+        <p>Get personalized recommendations for optimal sun exposure based on your location, skin type and daily routine.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <h3>Eco Footprint</h3>
+        <p>Track your environmental impact and learn how to reduce it while maintaining healthy sun exposure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <h3>Health Insights</h3>
+        <p>Understand how sun exposure affects your vitamin D levels, mood, and overall wellbeing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section id="impact" class="impact">
+    <div class="rays"></div>
+    <h2 class="section-title">Our Radiant Impact</h2>
+    <p>Join our community of sun-conscious users who've improved their health while reducing environmental harm.</p>
+    
+    <div class="impact-stats">
+      <div class="stat-item">
+        <div class="stat-number">85K+</div>
+        <div class="stat-label">Happy Users</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">92%</div>
+        <div class="stat-label">Vitamin D Optimization</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">35%</div>
+        <div class="stat-label">Reduced Sun Damage</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">12K+</div>
+        <div class="stat-label">Trees Planted</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Articles Section -->
+  <section id="articles" class="section">
+    <h2 class="section-title">Sun & Earth Wisdom</h2>
+    <div class="articles-grid">
+      <div class="article-card">
+        <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=60');"></div>
+        <div class="article-content">
+          <h3 class="article-title">The Perfect Balance of Sun Exposure</h3>
+          <p class="article-excerpt">Learn how to get just the right amount of sunlight for optimal health without harming your skin.</p>
+          <div class="article-meta">
+            <span><i class="far fa-clock"></i> 5 min read</span>
+            <span><i class="far fa-calendar-alt"></i> June 15, 2023</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-card">
+        <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1429087969512-1e85aab2683d?auto=format&fit=crop&w=500&q=60');"></div>
+        <div class="article-content">
+          <h3 class="article-title">Sunlight & Mental Wellbeing</h3>
+          <p class="article-excerpt">Discover how proper sun exposure can improve your mood, sleep, and overall mental health.</p>
+          <div class="article-meta">
+            <span><i class="far fa-clock"></i> 8 min read</span>
+            <span><i class="far fa-calendar-alt"></i> May 28, 2023</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-card">
+        <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=500&q=60');"></div>
+        <div class="article-content">
+          <h3 class="article-title">Eco-Friendly Sun Practices</h3>
+          <p class="article-excerpt">How to enjoy the sun while minimizing your environmental impact and protecting ecosystems.</p>
+          <div class="article-meta">
+            <span><i class="far fa-clock"></i> 6 min read</span>
+            <span><i class="far fa-calendar-alt"></i> May 10, 2023</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+ <section id="contact" class="contact">
+  <h2 class="section-title">Contact Us</h2>
+  <p>Have questions or feedback? We'd love to hear from you.</p>
+  <div class="email-container">
+    <a href="mailto:ecosphere.feedback@gmail.com" class="email-button">
+      <i class="fas fa-envelope"></i>
+      ecosphere.feedback@gmail.com
+    </a>
+  </div>
+  <p class="response-time">Drop us a message - we respond within 24 hours</p>
+</section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2023 EcoSphere. All rights reserved.</p>
+  </footer>
+
+  <!-- Sign In Modal -->
+  <div id="signInModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2 class="modal-title">Step into wellness</h2>
+      <img src="https://raw.githubusercontent.com/alaminO8islam/blahblahblah/main/ChatGPT%20Image%20Jul%205%2C%202025%2C%2009_08_24%20PM.png" alt="EcoSphere" class="modal-image">
+      <p style="color: var(--text-light); text-align: center; margin-bottom: 1.5rem;">Sign in to begin your journey to perfect sun-earth harmony</p>
+      
+      <div class="terms-checkbox">
+        <input type="checkbox" id="termsAgreement">
+        <label for="termsAgreement">I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a></label>
+      </div>
+      
+      <div class="modal-buttons">
+        <a href="{{ url_for('auth.google_login') }}" id="googleSignIn" class="modal-btn google" disabled>
+          <i class="fab fa-google"></i> Continue with Google
+        </a>
+        <button id="guestSignIn" class="modal-btn guest" disabled>
+          <i class="fas fa-user"></i> Continue as Guest
+        </button>
+      </div>
+    </div>
+</div>
+
+<!-- Terms & Privacy Modal -->
+<div id="termsModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-back-btn">&larr;</button>
+    <h2 class="modal-title">Privacy Policy & Terms</h2>
+    <div class="terms-content">
+      <h3>Privacy Policy</h3>
+      <p>EcoSphere respects your privacy. We collect only essential data to:</p>
+      <ul>
+        <li>Personalize your sun exposure recommendations</li>
+        <li>Calculate your environmental impact accurately</li>
+        <li>Improve our services through anonymous analytics</li>
+      </ul>
+      <p>Your data is never sold to third parties. We use industry-standard encryption for all transmissions.</p>
+      
+      <h3>Terms of Service</h3>
+      <p>By using EcoSphere, you agree to:</p>
+      <ul>
+        <li>Provide accurate location data for sun tracking</li>
+        <li>Use the service for personal, non-commercial purposes</li>
+        <li>Not attempt to reverse-engineer our algorithms</li>
+      </ul>
+      <p>We may update these terms periodically. Continued use constitutes acceptance.</p>
+      
+      <h3>Data Collection</h3>
+      <p>We collect:</p>
+      <ul>
+        <li>Location data (for UV/sun position calculations)</li>
+        <li>Activity logs (to measure environmental impact)</li>
+        <li>Device information (for optimal performance)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+  
+  <script>
+    // Enhanced Modal Functionality
+const mainModal = document.getElementById('signInModal');
+const termsModal = document.getElementById('termsModal');
+const modalTriggers = document.querySelectorAll('#loginBtn, #getStartedBtn, #contactBtn');
+const modalClose = document.querySelector('.modal-close');
+const backButton = document.querySelector('.modal-back-btn');
+const termsLinks = document.querySelectorAll('.terms-checkbox a');
+const termsCheckbox = document.getElementById('termsAgreement');
+const googleSignIn = document.getElementById('googleSignIn');
+const guestSignIn = document.getElementById('guestSignIn');
+
+// Initialize modal state
+if (localStorage.getItem('termsAgreed') !== 'true') {
+    resetModalState();
+}
+
+// Open main modal with fresh state
+modalTriggers.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetModalState();
+        mainModal.classList.add('active');
+    });
+});
+
+// Handle terms checkbox
+termsCheckbox.addEventListener('change', () => {
+  if (termsCheckbox.checked) {
+    // Show loading state immediately
+    termsCheckbox.disabled = true;
+    
+    // Add 3-second delay before showing buttons
+    setTimeout(() => {
+      googleSignIn.style.display = 'flex';
+      guestSignIn.style.display = 'flex';
+      guestSignIn.removeAttribute('disabled');
+      termsCheckbox.disabled = false;
+      localStorage.setItem('termsAgreed', 'true');
+
+      // Enhanced hover effects for buttons
+[googleSignIn, guestSignIn].forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    if (!termsCheckbox.checked) return;
+    btn.style.transform = 'scale(1.02)';
+  });
+  
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+  });
+});
+      
+      // Add smooth fade-in animation
+      googleSignIn.style.animation = 'fadeIn 0.5s ease-out';
+      guestSignIn.style.animation = 'fadeIn 0.5s ease-out';
+    }, 500); // 500ms = 0.5  Seconds
+  } else {
+    // Immediate response when unchecking
+    googleSignIn.style.display = 'none';
+    guestSignIn.style.display = 'none';
+    guestSignIn.setAttribute('disabled', 'true');
+    localStorage.removeItem('termsAgreed');
+  }
+});
+
+// Enhanced hover effects for buttons
+[googleSignIn, guestSignIn].forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    if (!termsCheckbox.checked) return;
+    btn.style.transform = 'scale(1.02)';
+  });
+  
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+  });
+});
+// Close modals
+modalClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeModals();
+});
+
+backButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    termsModal.classList.remove('active');
+    mainModal.classList.add('active');
+});
+
+// Open terms modal
+termsLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        mainModal.classList.remove('active');
+        termsModal.classList.add('active');
+    });
+});
+
+// Close modals when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal')) {
+        closeModals();
+    }
+});
+
+// ====== PASTE THIS CODE ====== //
+// Google Sign-In - Correct Redirect
+document.getElementById('googleSignIn').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!termsCheckbox.checked) {
+        alert('Please agree to the Terms of Service first');
+        return;
+    }
+    window.location.href = '/login/google';  // ✅ Correct route here
+});
+
+// Guest Sign-In - Correct API Call
+document.getElementById('guestSignIn').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!termsCheckbox.checked) {
+        alert('Please agree to the Terms of Service first');
+        return;
+    }
+
+    const guestBtn = e.target;
+    const originalText = guestBtn.innerHTML;
+    guestBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+    guestBtn.disabled = true;
+
+    fetch('/api/auth/guest', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' }
+})
+.then(res => res.json())
+.then(data => {
+  console.log('Guest Login Success:', data);
+  window.location.href = '/app/dashboard.html';
+})
+.catch(error => {
+  console.error('Guest Login Error:', error);
+  alert('Guest login failed. Try again.');
+});
+});
+
+// Helper functions
+function resetModalState() {
+    termsCheckbox.checked = false;
+    googleSignIn.style.display = 'none';
+    guestSignIn.style.display = 'none';
+}
+
+function closeModals() {
+    mainModal.classList.remove('active');
+    termsModal.classList.remove('active');
+    setTimeout(() => {
+        if (localStorage.getItem('termsAgreed') !== 'true') {
+            resetModalState();
+            mainModal.classList.add('active');
+        }
+    }, 1000);
+}
+
+    // Animate elements when they come into view
+    const animateOnScroll = () => {
+      const elements = document.querySelectorAll('.feature-card, .stat-item, .article-card');
+      
+      elements.forEach(element => {
+        const elementPosition = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        
+        if (elementPosition < windowHeight - 100) {
+          element.style.opacity = '1';
+          element.style.transform = 'translateY(0)';
+        }
+      });
+    };
+
+    // Set initial state for animation
+    document.querySelectorAll('.feature-card, .stat-item, .article-card').forEach(element => {
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(20px)';
+      element.style.transition = 'all 0.6s ease';
+    });
+
+    // Run once on load
+    animateOnScroll();
+
+    // Run on scroll
+    window.addEventListener('scroll', animateOnScroll);
+
+    // Create sun rays in hero section
+    const hero = document.querySelector('.hero');
+    for (let i = 0; i < 8; i++) {
+      const ray = document.createElement('div');
+      ray.className = 'ray';
+      ray.style.position = 'absolute';
+      ray.style.width = '2px';
+      ray.style.height = '100px';
+      ray.style.backgroundColor = 'rgba(255, 191, 105, 0.3)';
+      ray.style.top = '50%';
+      ray.style.left = '50%';
+      ray.style.transformOrigin = 'bottom center';
+      ray.style.transform = `translate(-50%, -50%) rotate(${i * 45}deg)`;
+      hero.appendChild(ray);
+    }
+
+    // Create floating sun particles
+    const sunPath = document.querySelector('.sun-path');
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'sun-particle';
+      particle.style.position = 'absolute';
+      particle.style.width = `${Math.random() * 10 + 5}px`;
+      particle.style.height = particle.style.width;
+      particle.style.backgroundColor = 'rgba(255, 191, 105, 0.5)';
+      particle.style.borderRadius = '50%';
+      particle.style.top = `${Math.random() * 100}%`;
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.animation = `float ${Math.random() * 10 + 5}s infinite ease-in-out`;
+      particle.style.opacity = Math.random() * 0.5 + 0.3;
+      sunPath.appendChild(particle);
+    }
+
+    // Add animation for floating particles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes float {
+        0% { transform: translateY(0) translateX(0); }
+        50% { transform: translateY(-20px) translateX(10px); }
+        100% { transform: translateY(0) translateX(0); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    setTimeout(() => {
+  googleSignIn.classList.add('active');
+  guestSignIn.classList.add('active');
+  // Remove this line: googleSignIn.style.display = 'flex';
+  // Remove this line: guestSignIn.style.display = 'flex';
+}, 3000);
+
+  </script>
+</body>
+</html>

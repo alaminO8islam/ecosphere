@@ -17,34 +17,34 @@ The project's methodology involved a modular development approach across eight w
 
 ### ✨ Key Features
 ```
-## 1.	Daily Carbon Footprint Logging
+1.	Daily Carbon Footprint Logging
 Users can log their daily activities across three categories: transportation, energy usage, and food habits. Each input contributes to an individual's carbon emission profile.
-## 2.	Real-Time CO₂ Impact Calculation
+2.	Real-Time CO₂ Impact Calculation
 Emission models calculate the user's daily, weekly, and cumulative CO₂ impact instantly. Calculations use publicly available emission factors to approximate environmental footprint.
-## 3.	Vitamin D Estimator
+3.	Vitamin D Estimator
 Uses the user's location, UV index, and sunlight exposure to estimate daily Vitamin D levels, promoting better health awareness in relation to geography and time of year.
-## 4.	Authentication
+4.	Authentication
 Users can now create an account using their name, email, and password. Upon successful creation, data is securely stored in the database, and users can log in with those credentials anytime.
 To simulate email verification without third-party services, a 6-digit code is generated and shown immediately after registration in a modal. The user must input this code to complete the verification process. This ensures authenticity while remaining cost-free.
 Users can also choose the guest login option, which auto-generates a profile such as Guest_748291. This allows quick entry without registration. Guest profiles are temporary and fully deleted on logout, suitable for demo or test usage.
-## 5.	Avatar Customization & Profile Editing
+5.	Avatar Customization & Profile Editing
 Users can choose from 6 predefined eco-themed avatars (via DiceBear) and edit their name. Profile personalization enhances user engagement and identification.
-## 6.	Gamified Rank Progress System
+6.	Gamified Rank Progress System
 o	Ranks from 1 to 10 with progress reset to 0/100 upon each level-up.
 o	First 1–2 ranks are unlocked quickly to demonstrate badge visibility.
 o	Later ranks grow slower via real activity-based achievements.
 o	Custom badges dynamically appear on the avatar when unlocked, with animations.
-## 7.	Progress Tracking & Visualization
+7.	Progress Tracking & Visualization
 Dashboard and Progress Page display real-time user stats using visual bars. Progress is broken down into:
 o	Eco Habits
 o	Energy Efficiency
 o	Water Conservation
 o	Sustainable Living
-## 8.	Interactive Dashboard
+8.	Interactive Dashboard
 Presents weather-based insights (temperature, humidity, UV index) using the user's geolocation. If location access is denied, displays "No Data".
-## 9.	Location-Enabled Weather & Vitamin D API Logic
+9.	Location-Enabled Weather & Vitamin D API Logic
 Uses geolocation on login to fetch environmental data. Also includes manually selected country/city options for Vitamin D estimates if user denies geolocation.
-## 10.	Responsive UI with Modal Logic
+10.	Responsive UI with Modal Logic
 All forms (login, profile editing, verification) use modal popups for seamless UI/UX. Includes checkbox validation, animations, and clean CSS design.
 ```
 ---

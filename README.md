@@ -1,4 +1,4 @@
-<h1 align="center">🌍 EcoSphere – Smart Climate Wellness Tracker</h1>
+<h1 align="center">🌍 EcoSphere: A Personal Environmental Health & Impact Tracker</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Flask-Python-blue.svg?logo=flask" />
@@ -8,20 +8,44 @@
 
 ---
 
-### 🧠 Project Definition
+### 🧠 Abstract
+EcoSphere is an innovative web-based platform designed to help individuals monitor their daily environmental impact while improving personal well-being. The system integrates a carbon footprint tracker, real-time CO₂ estimations, and a unique Vitamin D advisor, making environmental awareness a part of daily life. Built using Python (Flask), MySQL, and modern front-end technologies, EcoSphere offers features such as user authentication, gamified ranking systems, real-time analytics dashboards, and location-based weather insights. 
 
-> **EcoSphere** is a personal climate wellness tracker that helps users log and analyze their daily carbon footprint, track vitamin D exposure, and visualize sustainability progress through gamified dashboards — powered by real-time AI & data tools.
+The project's methodology involved a modular development approach across eight weeks, focusing on user-centered design, clean UI/UX, and backend logic for real-time updates. Key goals included promoting eco-conscious habits, simplifying environmental data interpretation, and integrating wellness guidance via sunlight and UV exposure tracking. The platform is functional, visually engaging, and scalable. It addresses real-world needs for sustainability education through gamification and personalization. Overall, EcoSphere bridges the gap between digital innovation and sustainable living in a way that's interactive, educational, and user-friendly.
 
 ---
 
 ### ✨ Key Features
 
-- 🔸 Daily carbon footprint logging (Transport, Food, Energy)
-- 🔸 Real-time CO₂ impact calculations via open emission models
-- 🔸 AI-powered vitamin D estimator using UV index & location
-- 🔸 Gamified dashboard with progress badges
-- 🔸 Google Sign-In authentication
-- 🔸 Data visualizations using charts and maps
+1.	Daily Carbon Footprint Logging
+Users can log their daily activities across three categories: transportation, energy usage, and food habits. Each input contributes to an individual's carbon emission profile.
+2.	Real-Time CO₂ Impact Calculation
+Emission models calculate the user's daily, weekly, and cumulative CO₂ impact instantly. Calculations use publicly available emission factors to approximate environmental footprint.
+3.	Vitamin D Estimator
+Uses the user's location, UV index, and sunlight exposure to estimate daily Vitamin D levels, promoting better health awareness in relation to geography and time of year.
+4.	Authentication
+Users can now create an account using their name, email, and password. Upon successful creation, data is securely stored in the database, and users can log in with those credentials anytime.
+To simulate email verification without third-party services, a 6-digit code is generated and shown immediately after registration in a modal. The user must input this code to complete the verification process. This ensures authenticity while remaining cost-free.
+Users can also choose the guest login option, which auto-generates a profile such as Guest_748291. This allows quick entry without registration. Guest profiles are temporary and fully deleted on logout, suitable for demo or test usage.
+5.	Avatar Customization & Profile Editing
+Users can choose from 6 predefined eco-themed avatars (via DiceBear) and edit their name. Profile personalization enhances user engagement and identification.
+6.	Gamified Rank Progress System
+o	Ranks from 1 to 10 with progress reset to 0/100 upon each level-up.
+o	First 1–2 ranks are unlocked quickly to demonstrate badge visibility.
+o	Later ranks grow slower via real activity-based achievements.
+o	Custom badges dynamically appear on the avatar when unlocked, with animations.
+7.	Progress Tracking & Visualization
+Dashboard and Progress Page display real-time user stats using visual bars. Progress is broken down into:
+o	Eco Habits
+o	Energy Efficiency
+o	Water Conservation
+o	Sustainable Living
+8.	Interactive Dashboard
+Presents weather-based insights (temperature, humidity, UV index) using the user's geolocation. If location access is denied, displays "No Data".
+9.	Location-Enabled Weather & Vitamin D API Logic
+Uses geolocation on login to fetch environmental data. Also includes manually selected country/city options for Vitamin D estimates if user denies geolocation.
+10.	Responsive UI with Modal Logic
+All forms (login, profile editing, verification) use modal popups for seamless UI/UX. Includes checkbox validation, animations, and clean CSS design.
 
 ---
 
@@ -40,53 +64,30 @@
 
 ---
 
-### 📁 Folder Structure (Simplified)
+### ## 📁 Project Structure
 
 ```
-ecosphere/
-│
+├── .venv/                      # Virtual environment (hidden)
 ├── app/
-│   ├── __init__.py
-│   ├── routes/
+│   ├── routes/                 # Application route handlers
 │   │   ├── __init__.py
-│   │   ├── auth_routes.py
-│   │   ├── dashboard_routes.py
-│   │   └── tracker_routes.py
-│   │
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── style.css
-│   │   └── js/
-│   │       └── scripts.js
-│   │
-│   ├── templates/
-│   │   ├── layout.html
-│   │   ├── index.html
-│   │   ├── login.html
+│   │   ├── auth.py             # Authentication routes
+│   │   ├── carbon.py           # Carbon footprint related routes
+│   │   ├── dashboard.py        # Dashboard-related routes
+│   │   ├── notes.py            # Notes feature routes
+│   │   └── notifications.py    # Notification-related routes
+│   ├── static/                 # Static HTML files
 │   │   ├── dashboard.html
-│   │   └── tracker.html
-│   │
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── user.py
-│   │   ├── tracker.py
-│   │   └── vitamin_d.py
-│   │
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── emissions.py
-│   │   ├── vitamin_d_ai.py
-│   │   └── charts.py
-│   │
-│   └── config.py
-│
-├── instance/
-│   └── config.env        # Secret keys, DB credentials
-│
-├── requirements.txt
-├── run.py                # Entry point
-└── README.md
-
+│   │   └── index.html
+│   ├── templates/              # Jinja2 HTML templates
+│   │   └── __init__.py
+│   └── models.py               # Database models
+├── .env                        # Environment variables
+├── config.py                   # App configuration
+├── ecosphere_schema.sql        # SQL schema for database
+├── README.md                   # Project documentation
+├── requirements.txt            # Python dependencies
+└── run.py                      # Entry point to run the application
 ```
 
 ---
@@ -103,6 +104,13 @@ python run.py
 ```
 
 ---
+
+
+
+
+
+
+
 
 ## 🤝 Contributing
 

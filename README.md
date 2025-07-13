@@ -16,7 +16,7 @@ The project's methodology involved a modular development approach across eight w
 ---
 
 ### ✨ Key Features
-
+```
 ## 1.	Daily Carbon Footprint Logging
 Users can log their daily activities across three categories: transportation, energy usage, and food habits. Each input contributes to an individual's carbon emission profile.
 ## 2.	Real-Time CO₂ Impact Calculation
@@ -46,7 +46,7 @@ Presents weather-based insights (temperature, humidity, UV index) using the user
 Uses geolocation on login to fetch environmental data. Also includes manually selected country/city options for Vitamin D estimates if user denies geolocation.
 ## 10.	Responsive UI with Modal Logic
 All forms (login, profile editing, verification) use modal popups for seamless UI/UX. Includes checkbox validation, animations, and clean CSS design.
-
+```
 ---
 
 ### 🔧 Tech Stack Overview

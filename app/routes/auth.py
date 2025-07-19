@@ -49,3 +49,58 @@ def login():
         "rank": user.rank,
         "progress": user.progress
     })
+
+@bp.route('/create_account', methods=['POST'])
+def create_account():
+    data = request.get_json()
+    first = data.get('first_name')
+    last = data.get('last_name')
+    email = data.get('email')
+    password = data.get('password')
+    
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "Email already exists"}), 409
+
+    code = ''.join(random.choices(string.digits, k=6))
+    verification_store[email] = {
+        "code": code,
+        "timestamp": time.time(),
+        "user_data": {
+            "name": f"{first} {last}",
+            "email": email,
+            "password": generate_password_hash(password),
+            "avatar": "default-avatar.png",
+            "guest": False,
+            "rank": 1,
+            "progress": 0
+        }
+    }
+    return jsonify({"message": "Code generated", "code": code}), 200
+
+
+@bp.route('/verify_code', methods=['POST'])
+def verify_code():
+    data = request.get_json()
+    email = data.get('email')
+    input_code = data.get('code')
+    
+    entry = verification_store.get(email)
+    if not entry:
+        return jsonify({"error": "No verification attempt found"}), 404
+    
+    if time.time() - entry["timestamp"] > 60:
+        del verification_store[email]
+        return jsonify({"error": "Code expired"}), 410
+    
+    if input_code != entry["code"]:
+        return jsonify({"error": "Invalid code"}), 401
+    
+    user_data = entry["user_data"]
+    new_user = User(**user_data)
+    db.session.add(new_user)
+    db.session.commit()
+    session['user_id'] = new_user.id
+    session['guest'] = False
+    del verification_store[email]
+    
+    return jsonify({"message": "Verified. Now ask for birthday."})

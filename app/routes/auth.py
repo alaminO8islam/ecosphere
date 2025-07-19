@@ -28,3 +28,24 @@ def guest_login():
         "user_id": guest_user.id,
         "name": guest_user.name
     })
+
+@bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+    user = User.query.filter_by(email=email).first()
+    
+    if not user or not check_password_hash(user.password, password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    session['user_id'] = user.id
+    session['guest'] = False
+    return jsonify({
+        "message": "Login successful",
+        "user_id": user.id,
+        "name": user.name,
+        "avatar": user.avatar,
+        "rank": user.rank,
+        "progress": user.progress
+    })

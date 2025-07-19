@@ -104,3 +104,46 @@ def verify_code():
     del verification_store[email]
     
     return jsonify({"message": "Verified. Now ask for birthday."})
+
+@bp.route('/save_birthday', methods=['POST'])
+def save_birthday():
+    data = request.get_json()
+    birthday = data.get("birthday")
+    user = User.query.get(session.get('user_id'))
+    if user:
+        user.birthday = birthday
+        db.session.commit()
+        return jsonify({"message": "Birthday saved. Welcome!"})
+    return jsonify({"error": "User not found"}), 404
+
+@bp.route('/logout', methods=['POST'])
+def logout():
+    user_id = session.get('user_id')
+    is_guest = session.get('guest', False)
+
+    if user_id and is_guest:
+        user = User.query.get(user_id)
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+    session.clear()
+    return jsonify({"message": "Logged out."})
+
+
+@bp.route('/me', methods=['GET'])
+def get_user():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "user_id": user.id,
+        "name": user.name,
+        "avatar": user.avatar,
+        "rank": user.rank,
+        "progress": user.progress,
+        "guest": user.guest
+    })

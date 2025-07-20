@@ -66,13 +66,14 @@ def create_account():
         "code": code,
         "timestamp": time.time(),
         "user_data": {
-            "name": f"{first} {last}",
-            "email": email,
-            "password": generate_password_hash(password),
-            "avatar": "default-avatar.png",
-            "guest": False,
-            "rank": 1,
-            "progress": 0
+        "first_name": first,
+        "last_name": last,
+        "email": email,
+        "password": generate_password_hash(password),
+        "avatar": "default-avatar.png",
+        "guest": False,
+        "rank": 1,
+        "progress": 0
         }
     }
     return jsonify({"message": "Code generated", "code": code}), 200
@@ -141,7 +142,7 @@ def get_user():
 
     return jsonify({
         "user_id": user.id,
-        "name": user.name,
+        "name": f"{user.first_name} {user.last_name}",
         "avatar": user.avatar,
         "rank": user.rank,
         "progress": user.progress,

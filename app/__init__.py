@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_cors import CORS
 from dotenv import load_dotenv
+from .routes import main
 import os
 
 db = SQLAlchemy()
@@ -14,24 +15,22 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///default.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.secret_key = os.getenv('SECRET_KEY', 'your-default-secret')  # Required for session handling
+    app.secret_key = os.getenv('SECRET_KEY', 'your-default-secret')
 
     db.init_app(app)
     CORS(app)
     login_manager.init_app(app)
 
-    # Import here to avoid circular imports
-    from .models.user import User
+    from .models import User
 
     @login_manager.user_loader
     def load_user(user_id):
+        from .models import User
         return User.query.get(int(user_id))
 
-    # Register routes
-    from .routes import auth, dashboard, notes, notifications
+
+    from .routes import auth, dashboard
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
-    app.register_blueprint(notes.bp)
-    app.register_blueprint(notifications.bp)
-
+    app.register_blueprint(main.bp)
     return app

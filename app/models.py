@@ -1,16 +1,21 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 from datetime import datetime
 
-db = SQLAlchemy()
+from app import db
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255))
-    name = db.Column(db.String(255))
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
     avatar = db.Column(db.String(255))
+    password = db.Column(db.String(255))
     rank = db.Column(db.String(50))
     progress = db.Column(db.Integer, default=0)
     guest = db.Column(db.Boolean, default=False)
+    birthday = db.Column(db.Date)
+
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,3 +48,6 @@ class Note(db.Model):
     title = db.Column(db.String(255))
     content = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+def get_user_by_id(user_id):
+    return User.query.get(user_id)

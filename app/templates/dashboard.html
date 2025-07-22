@@ -3819,10 +3819,11 @@ fetch('/api/auth/me')
         updateNotificationCount();
 
         // Logout Button
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            // Redirect to the specified path
-            window.location.href = 'C:\\Users\\U S E R\\Documents\\ecosphere\\app\\templates\\index.html';
+        document.getElementById('logoutBtn').addEventListener('click', async function () {
+        await fetch('/api/auth/logout', { method: 'POST' });
+         window.location.href = '/';
         });
+
 
         // Export Data Button with dropdown
         const exportDataBtn = document.getElementById('exportDataBtn');
@@ -4308,13 +4309,17 @@ fetch('/api/auth/me')
         });
 
         // Profile Modal
-        const modal = document.getElementById("profileModal");
-        const editBtn = document.querySelector(".edit-profile i");
-        const closeBtn = document.querySelector(".modal .close");
+        setTimeout(() => {
+            const modal = document.getElementById("profileModal");
+            const editBtn = document.querySelector(".edit-profile i");
+            const closeBtn = document.querySelector(".modal .close");
 
-        editBtn.onclick = () => modal.style.display = "block";
-        closeBtn.onclick = () => modal.style.display = "none";
-        window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+            if (editBtn && modal && closeBtn) {
+             editBtn.onclick = () => modal.style.display = "block";
+             closeBtn.onclick = () => modal.style.display = "none";
+            window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+             }
+            }, 100); 
 
         // EcoBot AI Assistant
         const chatbotMessages = document.getElementById("aiMessages");

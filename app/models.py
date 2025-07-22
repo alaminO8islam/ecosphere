@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     progress = db.Column(db.Integer, default=0)
     guest = db.Column(db.Boolean, default=False)
     birthday = db.Column(db.Date)
-
+    name = db.Column(db.String(255))
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)

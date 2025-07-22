@@ -29,8 +29,9 @@ def create_app():
         return User.query.get(int(user_id))
 
 
-    from .routes import auth, dashboard
+    from .routes import auth, dashboard, main
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(main.bp)
+
     return app

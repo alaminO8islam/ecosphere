@@ -1330,22 +1330,31 @@
     document.body.style.overflow = 'auto';
   }
 
-  // Modal triggers
-  document.getElementById('getStartedBtn').addEventListener('click', () => openModal('signInModal'));
-  document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
-  document.getElementById('openCreateAccountModal').addEventListener('click', () => {
+  // Modal triggers - Fixed these event listeners
+  document.getElementById('getStartedBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('signInModal');
+  });
+
+  document.getElementById('loginBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('loginModal');
+  });
+
+  document.getElementById('openCreateAccountModal')?.addEventListener('click', (e) => {
+    e.preventDefault();
     closeModal('signInModal');
     openModal('createAccountModal');
   });
 
   // Terms and Privacy links
-  document.getElementById('showTerms').addEventListener('click', (e) => {
+  document.getElementById('showTerms')?.addEventListener('click', (e) => {
     e.preventDefault();
     closeModal('signInModal');
     openModal('termsModal');
   });
 
-  document.getElementById('showPrivacy').addEventListener('click', (e) => {
+  document.getElementById('showPrivacy')?.addEventListener('click', (e) => {
     e.preventDefault();
     closeModal('signInModal');
     openModal('termsModal');
@@ -1353,25 +1362,27 @@
 
   // Close buttons
   document.querySelectorAll('.modal-close, .close-modal').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const modal = btn.closest('.modal');
       closeModal(modal.id);
     });
   });
 
   // Back button in terms modal
-  document.querySelector('.modal-back-btn').addEventListener('click', () => {
+  document.querySelector('.modal-back-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
     closeModal('termsModal');
     openModal('signInModal');
   });
 
   // Close modal when clicking outside
   window.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal') && 
-      !e.target.closest('.modal-content')) {
-    closeModal(e.target.id);
-  }
-});
+    if (e.target.classList.contains('modal') && 
+        !e.target.closest('.modal-content')) {
+      closeModal(e.target.id);
+    }
+  });
 
   // ====================== TERMS AGREEMENT ====================== //
   const termsCheckbox = document.getElementById('termsAgreement');
@@ -1380,94 +1391,161 @@
   const guestSignIn = document.getElementById('guestSignIn');
 
   // Initialize buttons as hidden
-  googleSignIn.style.display = 'none';
-  createAccountBtn.style.display = 'none';
-  guestSignIn.style.display = 'none';
+  if (googleSignIn && createAccountBtn && guestSignIn) {
+    googleSignIn.style.display = 'none';
+    createAccountBtn.style.display = 'none';
+    guestSignIn.style.display = 'none';
 
-  termsCheckbox.addEventListener('change', () => {
-  if (termsCheckbox.checked) {
-    googleSignIn.style.display = 'flex';
-    createAccountBtn.style.display = 'flex';
-    guestSignIn.style.display = 'flex';
-    
-    // Remove disabled state immediately
-    googleSignIn.disabled = false;
-    createAccountBtn.disabled = false;
-    guestSignIn.disabled = false;
-    
-    // Force reflow to ensure animations work
-    void googleSignIn.offsetWidth;
-    
-    // Add animations
-    googleSignIn.style.animation = 'fadeIn 0.3s forwards';
-    createAccountBtn.style.animation = 'fadeIn 0.3s forwards';
-    guestSignIn.style.animation = 'fadeIn 0.3s forwards';
-  } else {
-    // Reverse the process
-    googleSignIn.style.animation = 'none';
-    createAccountBtn.style.animation = 'none';
-    guestSignIn.style.animation = 'none';
-    
-    setTimeout(() => {
-      googleSignIn.style.display = 'none';
-      createAccountBtn.style.display = 'none';
-      guestSignIn.style.display = 'none';
-    }, 10);
+    termsCheckbox?.addEventListener('change', () => {
+      if (termsCheckbox.checked) {
+        googleSignIn.style.display = 'flex';
+        createAccountBtn.style.display = 'flex';
+        guestSignIn.style.display = 'flex';
+        
+        // Remove disabled state immediately
+        googleSignIn.disabled = false;
+        createAccountBtn.disabled = false;
+        guestSignIn.disabled = false;
+        
+        // Force reflow to ensure animations work
+        void googleSignIn.offsetWidth;
+        
+        // Add animations
+        googleSignIn.style.animation = 'fadeIn 0.3s forwards';
+        createAccountBtn.style.animation = 'fadeIn 0.3s forwards';
+        guestSignIn.style.animation = 'fadeIn 0.3s forwards';
+      } else {
+        // Reverse the process
+        googleSignIn.style.animation = 'none';
+        createAccountBtn.style.animation = 'none';
+        guestSignIn.style.animation = 'none';
+        
+        setTimeout(() => {
+          googleSignIn.style.display = 'none';
+          createAccountBtn.style.display = 'none';
+          guestSignIn.style.display = 'none';
+        }, 10);
+      }
+    });
   }
-});
 
   // ====================== FORM HANDLING ====================== //
-  // Create Account Form
-  document.getElementById('createAccountForm').addEventListener('submit', (e) => {
+  // Create Account Form Submission
+  document.getElementById('createAccountForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    // Validate passwords match
+
+    const first = document.getElementById('firstName').value;
+    const last = document.getElementById('lastName').value;
+    const email = document.getElementById('createEmail').value;
     const password = document.getElementById('createPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    
+
     if (password !== confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    
-    closeModal('createAccountModal');
-    openModal('verifyCodeModal');
-    startTimer();
-  });
 
-  // Verify Code Form
-  document.getElementById('verifyCodeForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const enteredCode = document.getElementById('enteredCode').value;
-    const displayedCode = document.getElementById('code-display').textContent;
-    
-    if (enteredCode === displayedCode) {
-      closeModal('verifyCodeModal');
-      openModal('birthdayModal');
-    } else {
-      alert('Invalid verification code. Please try again.');
+    try {
+      const response = await fetch('/api/auth/create_account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: first, last_name: last, email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        document.getElementById('code-display').textContent = data.code;
+        closeModal('createAccountModal');
+        openModal('verifyCodeModal');
+        startTimer();
+      } else {
+        alert(data.error || 'Account creation failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error during account creation.');
     }
   });
 
-  // Birthday Form
-  document.getElementById('birthdayForm').addEventListener('submit', (e) => {
+  document.getElementById('verifyCodeForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const birthday = document.getElementById('birthdayInput').value;
-    
-    // Here you would typically send the data to your server
-    // For now, we'll just redirect to the dashboard
-    window.location.href = '/dashboard';
+
+    const email = document.getElementById('createEmail').value;
+    const enteredCode = document.getElementById('enteredCode').value;
+    const actualCode = document.getElementById('code-display').textContent;
+
+    try {
+      const response = await fetch('/api/auth/verify_code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: enteredCode })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        closeModal('verifyCodeModal');
+        openModal('birthdayModal');
+      } else {
+        alert(data.error || 'Verification failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Verification error.');
+    }
   });
 
-  // Login Form
-  document.getElementById('loginForm').addEventListener('submit', (e) => {
+  document.getElementById('birthdayForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const birthday = document.getElementById('birthdayInput').value;
+
+    try {
+      const response = await fetch('/api/auth/save_birthday', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ birthday })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = '/dashboard';
+      } else {
+        alert(data.error || 'Saving birthday failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error submitting birthday.');
+    }
+  });
+
+  // Login Form Submission
+  document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-    
-    // Here you would typically validate credentials with your server
-    // For now, we'll just redirect to the dashboard
-    window.location.href = '/dashboard';
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = '/dashboard';
+      } else {
+        alert(data.error || 'Login failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred during login.');
+    }
   });
 
   // ====================== VERIFICATION TIMER ====================== //
@@ -1475,10 +1553,6 @@
     let timeLeft = 60;
     const timerElement = document.getElementById('timer');
     const resendBtn = document.getElementById('resendCodeBtn');
-    
-    // Generate random 6-digit code
-    const newCode = Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('code-display').textContent = newCode;
     
     const timer = setInterval(() => {
       timeLeft--;
@@ -1491,10 +1565,7 @@
       }
     }, 1000);
     
-    resendBtn.addEventListener('click', () => {
-      // Generate a new random code
-      const newCode = Math.floor(100000 + Math.random() * 900000);
-      document.getElementById('code-display').textContent = newCode;
+    resendBtn?.addEventListener('click', () => {
       
       // Reset timer
       timerElement.style.display = 'inline';
@@ -1506,7 +1577,7 @@
 
   // ====================== AUTHENTICATION ====================== //
   // Google Sign-In
-  document.getElementById('googleSignIn').addEventListener('click', function(e) {
+  document.getElementById('googleSignIn')?.addEventListener('click', function(e) {
     e.preventDefault();
     if (!termsCheckbox.checked) {
       alert('Please agree to the Terms of Service first');
@@ -1516,26 +1587,38 @@
   });
 
   // Guest Sign-In
-  document.getElementById('guestSignIn').addEventListener('click', function(e) {
+  document.getElementById('guestSignIn')?.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (!termsCheckbox.checked) {
-      alert('Please agree to the Terms of Service first');
-      return;
-    }
 
     const guestBtn = e.target;
     const originalText = guestBtn.innerHTML;
     guestBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
     guestBtn.disabled = true;
 
-    // Simulate API call
-    setTimeout(() => {
-      window.location.href = '/dashboard';
-    }, 1500);
+    try {
+      const response = await fetch('/api/auth/guest', {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = '/dashboard';
+      } else {
+        alert(data.error || 'Guest sign-in failed.');
+        guestBtn.innerHTML = originalText;
+        guestBtn.disabled = false;
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error during guest sign-in.');
+      guestBtn.innerHTML = originalText;
+      guestBtn.disabled = false;
+    }
   });
 
   // Forgot Password
-  document.getElementById('forgotPasswordBtn').addEventListener('click', function(e) {
+  document.getElementById('forgotPasswordBtn')?.addEventListener('click', function(e) {
     e.preventDefault();
     alert('Password reset link has been sent to your email!');
   });

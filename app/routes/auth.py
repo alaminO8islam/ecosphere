@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..models import db, User
 import random, string, time
+from datetime import datetime
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -12,6 +13,8 @@ def guest_login():
     random_id = random.randint(100000, 999999)
     guest_user = User(
         email=None,
+        first_name=f"Guest_{random_id}",
+        last_name="",
         name=f"Guest_{random_id}",
         avatar="default-avatar.png",
         guest=True,
@@ -109,13 +112,21 @@ def verify_code():
 @bp.route('/save_birthday', methods=['POST'])
 def save_birthday():
     data = request.get_json()
-    birthday = data.get("birthday")
+    birthday_str = data.get("birthday")
+
+    try:
+        birthday_date = datetime.strptime(birthday_str, "%Y-%m-%d").date()
+
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid birthday format."}), 400
+
     user = User.query.get(session.get('user_id'))
     if user:
-        user.birthday = birthday
+        user.birthday = birthday_date
         db.session.commit()
         return jsonify({"message": "Birthday saved. Welcome!"})
     return jsonify({"error": "User not found"}), 404
+
 
 @bp.route('/logout', methods=['POST'])
 def logout():
@@ -129,6 +140,20 @@ def logout():
             db.session.commit()
     session.clear()
     return jsonify({"message": "Logged out."})
+
+@bp.route('/debug/users')
+def debug_users():
+    users = User.query.all()
+    return jsonify([{
+        "id": u.id,
+        "email": u.email,
+        "first_name": u.first_name,
+        "last_name": u.last_name,
+        "name": u.name,
+        "birthday": str(u.birthday),
+        "guest": u.guest
+    } for u in users])
+
 
 
 @bp.route('/me', methods=['GET'])

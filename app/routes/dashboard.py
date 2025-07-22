@@ -13,4 +13,4 @@ def dashboard():
         if user:
             return render_template('dashboard.html', username=user.name, is_guest=guest)
 
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('main.index'))

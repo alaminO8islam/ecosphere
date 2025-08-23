@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Carbon Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f39c12;
+            --secondary-color: #e67e22;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        
+        .calculator-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .calculator-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .calculator-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .calculator-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .calculator-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .calculator-body {
+            padding: 20px;
+        }
+        
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            scrollbar-width: thin;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .category-tabs::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        
+        .category-tab {
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            margin-right: 8px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab:hover {
+            background: #e0e0e0;
+        }
+        
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .item-card {
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .item-card.selected {
+            border-color: var(--primary-color);
+            background: #fff8e1;
+        }
+        
+        .item-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .item-details {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .impact-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .impact-high { background: #ffebee; color: #c62828; }
+        .impact-medium { background: #fff3e0; color: #ef6c00; }
+        .impact-low { background: #e8f5e9; color: #2e7d32; }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .unit-info {
+            font-size: 11px;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .efficiency-tip {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            border-left: 3px solid #2e7d32;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .efficiency-tip h6 {
+            color: #2e7d32;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, var(--success-color), #27ae60);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .result-details {
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .result-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .result-detail i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .impact-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .suggestion {
+            background: rgba(0,0,0,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .btn-again {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-again:hover {
+            background: rgba(255,255,255,0.4);
+        }
+        
+        @media (max-width: 480px) {
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .calculator-body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <div class="calculator-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h1 class="calculator-title">Energy Carbon Calculator</h1>
+            <p class="calculator-subtitle">Calculate your energy consumption carbon footprint</p>
+        </div>
+        
+        <div class="calculator-body">
+            <form id="energyForm">
+                <div class="category-tabs" id="categoryTabs">
+                    <!-- Tabs will be populated by JavaScript -->
+                </div>
+                
+                <div class="items-grid" id="energyItemsGrid">
+                    <!-- Energy items will be populated by JavaScript -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="consumption">Consumption Amount</label>
+                    <input type="number" step="0.1" min="0.1" class="form-control" id="consumption" placeholder="Select energy type first" required>
+                    <div class="unit-info" id="unitInfo">Select an energy type above to see the unit</div>
+                </div>
+                
+                <div class="efficiency-tip" id="efficiencyTip">
+                    <h6><i class="fas fa-lightbulb"></i> Energy Efficiency Tip</h6>
+                    <p id="tipText"></p>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                </div>
+            </form>
+            
+            <div id="resultCard" class="result-card">
+                <div class="result-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div id="resultText"></div>
+                <button class="btn btn-again" onclick="window.location.reload()">
+                    <i class="fas fa-redo"></i> Calculate Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Energy categories and items from carbon.py
+        const energyCategories = {
+            "Electricity": {
+                "electricity_grid": { 
+                    factor: 0.75, 
+                    unit: "kWh",
+                    icon: "fa-plug",
+                    tip: "Switch to LED bulbs, unplug devices when not in use, and use energy-efficient appliances to reduce electricity consumption."
+                },
+                "electricity_solar": { 
+                    factor: 0.05, 
+                    unit: "kWh",
+                    icon: "fa-solar-panel",
+                    tip: "Solar power is clean but consider battery storage to maximize usage during non-sunny hours."
+                },
+                "electricity_imported": { 
+                    factor: 0.6, 
+                    unit: "kWh",
+                    icon: "fa-plug",
+                    tip: "Imported electricity may have higher emissions. Consider generating your own renewable energy if possible."
+                }
+            },
+            "Fossil Fuels": {
+                "diesel": { 
+                    factor: 2.7, 
+                    unit: "liters",
+                    icon: "fa-gas-pump",
+                    tip: "Diesel has high emissions. Consider switching to electric or hybrid vehicles where possible."
+                },
+                "petrol": { 
+                    factor: 2.3, 
+                    unit: "liters",
+                    icon: "fa-gas-pump",
+                    tip: "Regular vehicle maintenance and proper tire inflation can improve fuel efficiency."
+                },
+                "natural_gas": { 
+                    factor: 2.0, 
+                    unit: "m³",
+                    icon: "fa-fire",
+                    tip: "Improve home insulation, use programmable thermostats, and maintain heating systems regularly."
+                },
+                "lpg": { 
+                    factor: 2.98, 
+                    unit: "kg",
+                    icon: "fa-gas-pump",
+                    tip: "LPG is cleaner than some fuels but still emits CO₂. Use efficiently and consider alternatives."
+                }
+            },
+            "Renewables": {
+                "biomass": { 
+                    factor: 1.1, 
+                    unit: "kg",
+                    icon: "fa-leaf",
+                    tip: "Ensure biomass is sustainably sourced and burned efficiently to minimize emissions."
+                },
+                "biogas": { 
+                    factor: 0.2, 
+                    unit: "m³",
+                    icon: "fa-recycle",
+                    tip: "Biogas is a low-carbon option. Proper maintenance of biogas plants improves efficiency."
+                },
+                "solar_water": { 
+                    factor: 0.03, 
+                    unit: "kWh",
+                    icon: "fa-solar-panel",
+                    tip: "Solar water heaters are highly efficient. Insulate pipes to retain heat longer."
+                }
+            },
+            "Appliances": {
+                "ac_unit": { 
+                    factor: 0.75, 
+                    unit: "hours",
+                    icon: "fa-snowflake",
+                    tip: "Set your AC to 24°C or higher, use ceiling fans to help circulate cool air, and maintain your AC regularly."
+                },
+                "refrigerator": { 
+                    factor: 0.65, 
+                    unit: "hours",
+                    icon: "fa-ice-cream",
+                    tip: "Keep your refrigerator at 3-5°C, ensure proper door seals, and don't overload it."
+                },
+                "fan": { 
+                    factor: 0.2, 
+                    unit: "hours",
+                    icon: "fa-fan",
+                    tip: "Ceiling fans use less energy than AC. Turn them off when not in the room."
+                },
+                "light_led": { 
+                    factor: 0.1, 
+                    unit: "hours",
+                    icon: "fa-lightbulb",
+                    tip: "LEDs are already efficient. Turn them off when not needed and use natural light when possible."
+                }
+            }
+        };
+
+        let selectedEnergyItem = null;
+        let currentCategory = null;
+        
+        // Initialize category tabs
+        const categoryTabs = document.getElementById('categoryTabs');
+        Object.keys(energyCategories).forEach(category => {
+            const tab = document.createElement('div');
+            tab.className = 'category-tab';
+            tab.textContent = category;
+            tab.dataset.category = category;
+            tab.addEventListener('click', () => loadEnergyItems(category));
+            categoryTabs.appendChild(tab);
+        });
+        
+        // Load first category by default
+        if (Object.keys(energyCategories).length > 0) {
+            currentCategory = Object.keys(energyCategories)[0];
+            categoryTabs.children[0].classList.add('active');
+            loadEnergyItems(currentCategory);
+        }
+        
+        // Load energy items for a category
+        function loadEnergyItems(category) {
+            currentCategory = category;
+            const energyItemsGrid = document.getElementById('energyItemsGrid');
+            energyItemsGrid.innerHTML = '';
+            
+            // Update active tab
+            Array.from(categoryTabs.children).forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === category);
+            });
+            
+            // Add energy items
+            for (const [item, data] of Object.entries(energyCategories[category])) {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.dataset.item = item;
+                card.innerHTML = `
+                    <div class="item-icon">
+                        <i class="fas ${data.icon}"></i>
+                    </div>
+                    <h4 class="item-name">${item.replace(/_/g, ' ')}</h4>
+                    <p class="item-details">${data.factor} kg CO₂ per ${data.unit}</p>
+                    <span class="impact-badge ${getImpactClass(data.factor)}">${getImpactLevel(data.factor)}</span>
+                `;
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedEnergyItem = { name: item, ...data };
+                    
+                    // Update consumption field
+                    document.getElementById('consumption').placeholder = `Enter amount in ${data.unit}`;
+                    document.getElementById('unitInfo').textContent = `Unit: ${data.unit}`;
+                    
+                    // Show efficiency tip
+                    document.getElementById('tipText').textContent = data.tip;
+                    document.getElementById('efficiencyTip').style.display = 'block';
+                });
+                energyItemsGrid.appendChild(card);
+            }
+        }
+        
+        function getImpactLevel(factor) {
+            if (factor > 1.5) return 'High';
+            if (factor > 0.5) return 'Medium';
+            return 'Low';
+        }
+        
+        function getImpactClass(factor) {
+            if (factor > 1.5) return 'impact-high';
+            if (factor > 0.5) return 'impact-medium';
+            return 'impact-low';
+        }
+        
+        function getSuggestion(factor) {
+            if (factor > 1.5) return 'Consider switching to renewable energy sources or more efficient alternatives.';
+            if (factor > 0.5) return 'Moderate impact energy sources can be optimized with efficiency measures.';
+            return 'Low impact energy sources are excellent choices for sustainability.';
+        }
+        
+        // Form submission
+        document.getElementById('energyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedEnergyItem) {
+                alert('Please select an energy type');
+                return;
+            }
+            
+            const consumption = parseFloat(document.getElementById('consumption').value);
+            
+            if (!consumption || consumption <= 0) {
+                alert('Please enter a valid consumption amount');
+                return;
+            }
+            
+            const carbonEmission = selectedEnergyItem.factor * consumption;
+            
+            const resultCard = document.getElementById('resultCard');
+            const resultText = document.getElementById('resultText');
+            
+            resultText.innerHTML = `
+                <div class="result-value">${carbonEmission.toFixed(2)} kg CO₂</div>
+                
+                <div class="result-details">
+                    <div class="result-detail">
+                        <i class="fas ${selectedEnergyItem.icon}"></i>
+                        <span>Energy: ${selectedEnergyItem.name.replace(/_/g, ' ')}</span>
+                    </div>
+                    <div class="result-detail">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Consumption: ${consumption} ${selectedEnergyItem.unit}</span>
+                    </div>
+                    <div class="result-detail">
+                        <i class="fas fa-bolt"></i>
+                        <span>Emission Factor: ${selectedEnergyItem.factor} kg/${selectedEnergyItem.unit}</span>
+                    </div>
+                </div>
+                
+                <div class="impact-tag">
+                    <i class="fas ${getImpactClass(selectedEnergyItem.factor) === 'impact-high' ? 'fa-exclamation-triangle' : 
+                                   getImpactClass(selectedEnergyItem.factor) === 'impact-medium' ? 'fa-info-circle' : 'fa-check-circle'}"></i>
+                    ${getImpactLevel(selectedEnergyItem.factor)} Impact
+                </div>
+                
+                <div class="suggestion">
+                    <i class="fas fa-lightbulb"></i> ${getSuggestion(selectedEnergyItem.factor)}
+                </div>
+            `;
+            
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,3 @@
-
 CREATE DATABASE IF NOT EXISTS ecosphere;
 USE ecosphere;
 
@@ -50,4 +49,3 @@ CREATE TABLE note (
     content TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);

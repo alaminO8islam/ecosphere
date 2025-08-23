@@ -29,7 +29,8 @@ def create_app():
         return User.query.get(int(user_id))
 
 
-    from .routes import auth, dashboard, main
+    from .routes import auth, dashboard, main, carbon
+    app.register_blueprint(carbon.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(main.bp)

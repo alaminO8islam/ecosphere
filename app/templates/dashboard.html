@@ -5655,5 +5655,228 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
+<script>
+
+// Vitamin D Estimation functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-detect location button
+    const getLocationBtn = document.getElementById('get-location');
+    if (getLocationBtn) {
+        getLocationBtn.addEventListener('click', getCurrentLocation);
+    }
+    
+    // Manual form submission
+    const countrySelect = document.getElementById('country-select');
+    const citySelect = document.getElementById('city-select');
+    const skinTypeSelect = document.getElementById('skin-type');
+    const exposureInput = document.getElementById('exposure-time');
+    
+    if (countrySelect && citySelect) {
+        countrySelect.addEventListener('change', updateCities);
+        citySelect.addEventListener('change', estimateVitaminDManual);
+    }
+    
+    if (skinTypeSelect && exposureInput) {
+        skinTypeSelect.addEventListener('change', estimateVitaminDManual);
+        exposureInput.addEventListener('change', estimateVitaminDManual);
+    }
+});
+
+// Get current location
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser");
+        return;
+    }
+    
+    // Show loading state
+    const btn = document.getElementById('get-location');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting...';
+    btn.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            estimateVitaminD(lat, lon);
+            
+            // Restore button
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        },
+        error => {
+            alert(`Error getting location: ${error.message}`);
+            
+            // Restore button
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    );
+}
+
+// Estimate Vitamin D from coordinates
+function estimateVitaminD(lat, lon) {
+    const skinType = document.getElementById('skin-type').value;
+    const exposureTime = document.getElementById('exposure-time').value;
+    
+    fetch('/vitamin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            lat: lat,
+            lon: lon,
+            skin_type: skinType,
+            exposure_time: exposureTime
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        updateVitaminDResults(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to get Vitamin D data: ' + error.message);
+    });
+}
+
+// Estimate Vitamin D from manual city selection
+function estimateVitaminDManual() {
+    const citySelect = document.getElementById('city-select');
+    const skinType = document.getElementById('skin-type').value;
+    const exposureTime = document.getElementById('exposure-time').value;
+    
+    if (!citySelect.value) return;
+    
+    fetch('/vitamin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            city: citySelect.value,
+            skin_type: skinType,
+            exposure_time: exposureTime
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        updateVitaminDResults(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to get Vitamin D data: ' + error.message);
+    });
+}
+
+// Update UI with Vitamin D results
+function updateVitaminDResults(data) {
+    // Update the stats cards
+    document.getElementById('current-uv').textContent = data.uv_index.toFixed(1);
+    document.getElementById('recommended-time').textContent = data.recommended_exposure + ' min';
+    document.getElementById('vitamin-level').textContent = data.vitamin_status;
+    
+    // Update the detailed information
+    const uvIndexElement = document.getElementById('uv-index');
+    const vitaminAdviceElement = document.getElementById('vitamin-advice');
+    
+    if (uvIndexElement) {
+        uvIndexElement.textContent = `UV Index: ${data.uv_index.toFixed(1)}`;
+    }
+    
+    if (vitaminAdviceElement) {
+        let advice = '';
+        if (data.vitamin_status === 'Low') {
+            advice = `You need more sun exposure. Try to get ${data.recommended_exposure} minutes of sun during midday.`;
+        } else if (data.vitamin_status === 'Moderate') {
+            advice = `Your vitamin D levels are moderate. Maintain your current sun exposure habits.`;
+        } else {
+            advice = `Your vitamin D levels are good. Be careful not to get too much sun exposure.`;
+        }
+        vitaminAdviceElement.textContent = `Advice: ${advice}`;
+    }
+    
+    // Update the chart if it exists
+    updateVitaminChart(data);
+}
+
+// Update Vitamin D chart
+function updateVitaminChart(data) {
+    // This would update your chart with new data
+    // You'll need to implement this based on your chart library
+    console.log('Update chart with:', data);
+}
+
+// Populate cities based on country selection
+function updateCities() {
+    const countrySelect = document.getElementById('country-select');
+    const citySelect = document.getElementById('city-select');
+    const selectedCountry = countrySelect.value;
+    
+    // Clear existing options
+    citySelect.innerHTML = '<option value="">Select City</option>';
+    
+    if (!selectedCountry) {
+        citySelect.disabled = true;
+        return;
+    }
+    
+    citySelect.disabled = false;
+    
+    const cities = citiesByCountry[selectedCountry] || [];
+    cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        citySelect.appendChild(option);
+    });
+}
+
+// Fetch real-time environmental data
+function fetchEnvironmentalData() {
+    // This would fetch data from your backend which in turn queries OpenWeather API
+    fetch('/api/environmental-data')
+        .then(response => response.json())
+        .then(data => {
+            updateEnvironmentalStats(data);
+        })
+        .catch(error => {
+            console.error('Error fetching environmental data:', error);
+        });
+}
+
+// Update the environmental stats cards
+function updateEnvironmentalStats(data) {
+    // Update temperature
+    const tempElement = document.querySelector('.stat-card.temperature .stat-info p');
+    if (tempElement && data.temperature) {
+        tempElement.innerHTML = `${data.temperature.toFixed(1)}°C <span class="trend up"><i class="fas fa-arrow-up"></i> 0.3°C</span>`;
+    }
+    
+    // Update humidity
+    const humidityElement = document.querySelector('.stat-card.humidity .stat-info p');
+    if (humidityElement && data.humidity) {
+        humidityElement.innerHTML = `${data.humidity}% <span class="trend down"><i class="fas fa-arrow-down"></i> 2%</span>`;
+    }
+    
+    // Update other stats as needed
+}
+
+// Fetch data on page load and then every 5 minutes
+document.addEventListener('DOMContentLoaded', function() {
+    fetchEnvironmentalData();
+    setInterval(fetchEnvironmentalData, 300000); // 5 minutes
+});
+
+</script>
 </body>
 </html>

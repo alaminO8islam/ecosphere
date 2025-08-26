@@ -1468,33 +1468,33 @@
     }
   });
 
-  document.getElementById('verifyCodeForm')?.addEventListener('submit', async (e) => {
+ document.getElementById('verifyCodeForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = document.getElementById('createEmail').value;
     const enteredCode = document.getElementById('enteredCode').value;
-    const actualCode = document.getElementById('code-display').textContent;
 
     try {
-      const response = await fetch('/api/auth/verify_code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code: enteredCode })
-      });
+        const response = await fetch('/api/auth/verify_code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code: enteredCode })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        closeModal('verifyCodeModal');
-        openModal('birthdayModal');
-      } else {
-        alert(data.error || 'Verification failed.');
-      }
+        if (response.ok) {
+            window.verifiedUserId = data.user_id;
+            closeModal('verifyCodeModal');
+            openModal('birthdayModal');
+        } else {
+            alert(data.error || 'Verification failed.');
+        }
     } catch (err) {
-      console.error(err);
-      alert('Verification error.');
+        console.error(err);
+        alert('Verification error.');
     }
-  });
+});
 
   document.getElementById('birthdayForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1502,26 +1502,28 @@
     const birthday = document.getElementById('birthdayInput').value;
 
     try {
-      const response = await fetch('/api/auth/save_birthday', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ birthday })
-      });
+        const response = await fetch('/api/auth/save_birthday', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                birthday: birthday,
+                user_id: window.verifiedUserId
+            })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        window.location.href = '/dashboard';
-      } else {
-        alert(data.error || 'Saving birthday failed.');
-      }
+        if (response.ok) {
+            window.location.href = '/dashboard';
+        } else {
+            alert(data.error || 'Saving birthday failed.');
+        }
     } catch (err) {
-      console.error(err);
-      alert('Error submitting birthday.');
+        console.error(err);
+        alert('Error submitting birthday.');
     }
-  });
+});
 
-  // Login Form Submission
   document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 

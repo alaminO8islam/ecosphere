@@ -2046,6 +2046,7 @@ a:hover {
             margin-bottom: 15px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
+            line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -3363,28 +3364,27 @@ a:hover {
                     </button>
                 </div>
             </div>
-            <!-- Pop-up overlays (one per calculator) -->
-        <div id="popup-transport" class="popup-overlay">
-            <div class="popup-modal">
-                <span class="popup-close" onclick="closePopup('popup-transport')">&times;</span>
-                <iframe class="popup-iframe" src="transport.html"></iframe>
-            </div>
-        </div>
+           <!-- Pop-up overlays (one per calculator) -->
+<div id="popup-transport" class="popup-overlay">
+    <div class="popup-modal">
+        <span class="popup-close" onclick="closePopup('popup-transport')">&times;</span>
+        <iframe class="popup-iframe" src="/api/carbon/transport"></iframe>
+    </div>
+</div>
 
-        <div id="popup-food" class="popup-overlay">
-            <div class="popup-modal">
-                <span class="popup-close" onclick="closePopup('popup-food')">&times;</span>
-                <iframe class="popup-iframe" src="food.html"></iframe>
-            </div>
-        </div>
+<div id="popup-food" class="popup-overlay">
+    <div class="popup-modal">
+        <span class="popup-close" onclick="closePopup('popup-food')">&times;</span>
+        <iframe class="popup-iframe" src="/api/carbon/food"></iframe>
+    </div>
+</div>
 
-        <div id="popup-energy" class="popup-overlay">
-            <div class="popup-modal">
-                <span class="popup-close" onclick="closePopup('popup-energy')">&times;</span>
-                <iframe class="popup-iframe" src="energy.html"></iframe>
-            </div>
-        </div>
-
+<div id="popup-energy" class="popup-overlay">
+    <div class="popup-modal">
+        <span class="popup-close" onclick="closePopup('popup-energy')">&times;</span>
+        <iframe class="popup-iframe" src="/api/carbon/energy"></iframe>
+    </div>
+</div>
             <div class="card">
                 <h2>Real-time CO₂ Impact</h2>
                 <div class="chart-wrapper">
@@ -3515,6 +3515,12 @@ a:hover {
                     
                     <div class="chart-wrapper">
                         <canvas id="vitaminChart"></canvas>
+                    </div>
+
+                    <div class="vitamin-card">
+                        <h3>Vitamin D Estimator</h3>
+                        <p id="uv-index">UV Index: --</p>
+                        <p id="vitamin-advice">Advice: --</p>
                     </div>
                 </div>
             </div>
@@ -4272,20 +4278,33 @@ a:hover {
         // Initialize notification count on page load
         updateNotificationCount();
 
-        // Logout Button
+// Logout Button
 document.querySelectorAll('#logoutBtn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', async function(e) {
         e.preventDefault();
-        // Clear any user session data
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('userData');
         
-        // Redirect to login page
-        window.location.href = window.location.href = 'C:\\Users\\U S E R\\Documents\\ecosphere\\app\\templates\\index.html';
-        
+        try {
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userData');
+                window.location.href = '/';
+            } else {
+                console.error('Logout failed');
+                window.location.href = '/';
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            window.location.href = '/';
+        }
     });
 });
-
         // Export functionality - add this to your existing JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     // Toggle export dropdown
@@ -4931,33 +4950,115 @@ function closePopup(popupId) {
                 document.getElementById('manual-section').style.display = 'block';
             });
 
-            // Location Detection
-            document.getElementById('get-location').addEventListener('click', function() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        function(position) {
-                            const lat = position.coords.latitude;
-                            const lng = position.coords.longitude;
-                            calculateVitaminD(lat, lng);
-                        },
-                        function(error) {
-                            alert('Error getting location: ' + error.message);
-                        }
-                    );
-                } else {
-                    alert('Geolocation is not supported by your browser');
-                }
-            });
+            // 🌞 Vitamin D Estimator Fix
+document.addEventListener("DOMContentLoaded", function () {
+    const detectBtn = document.getElementById("detect-location-btn");
+    const manualBtn = document.getElementById("manual-city-btn");
+
+
+// --- Function to auto-detect user location ---
+function autoDetectLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation);
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+}
+
+// Success: we got coordinates
+function successLocation(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    // Send coordinates to backend (Flask /vitamin route)
+    fetch("/vitamin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat: lat, lon: lon })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert("Error: " + data.error);
+        } else {
+            updateDashboard(data);
+        }
+    })
+    .catch(err => console.error("Fetch error:", err));
+}
+
+// Error: user denied location or problem occurred
+function errorLocation(error) {
+    console.error("Geolocation error:", error);
+    alert("Please allow location access for Vitamin D estimation.");
+}
+
+// --- Update dashboard with values ---
+function updateDashboard(data) {
+    // Assume your HTML has placeholders with IDs
+    document.getElementById("temperature").innerText = data.temperature + "°C";
+    document.getElementById("humidity").innerText = data.humidity + "%";
+    document.getElementById("uvIndex").innerText = data.uv_index;
+    document.getElementById("phLevel").innerText = data.ph || "N/A"; // only if you calculate pH
+}
+
+// --- Auto refresh every 10 minutes ---
+setInterval(autoDetectLocation, 600000);
+
+
+    // Manual city selection
+    if (manualBtn) {
+        manualBtn.addEventListener("click", function () {
+            const city = document.getElementById("manual-city-input").value;
+            if (!city) return;
+
+            fetch('/vitamin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ city: city })
+            })
+            .then(res => res.json())
+            .then(data => updateVitaminResult(data))
+            .catch(err => console.error(err));
+        });
+    }
+
+    // Update UI
+    function updateVitaminResult(data) {
+        if (data.error) {
+            document.getElementById("uv-index").textContent = "Error";
+            document.getElementById("vitamin-status").textContent = data.error;
+        } else {
+            document.getElementById("uv-index").textContent = data.uv_index;
+            document.getElementById("vitamin-status").textContent = data.vitamin_status;
+        }
+    }
+});
+
 
             // Country/City Selection
-            const countries = {
-                'AF': { name: 'Afghanistan', flag: 'https://flagcdn.com/w40/af.png', cities: ['Kabul', 'Kandahar', 'Herat', 'Mazar-i-Sharif'] },
-                'AL': { name: 'Albania', flag: '🇦🇱', cities: ['Tirana', 'Durrës', 'Vlorë'] },
-                'DZ': { name: 'Algeria', flag: '🇩🇿', cities: ['Algiers', 'Oran', 'Constantine', 'Annaba'] },
-                'US': { name: 'United States', flag: '🇺🇸', cities: ['New York', 'Los Angeles', 'Chicago'] },
-                'GB': { name: 'United Kingdom', flag: '🇬🇧', cities: ['London', 'Manchester', 'Birmingham'] },
-                // Add more countries as needed
-            };
+            const countries = [
+                { name: 'Bangladesh', cities: ['Dhaka', 'Chattogram', 'Sylhet', 'Khulna', 'Barishal', 'Rangpur', 'Rajshahi', 'Mymensingh'] },
+                { name: 'India', cities: ['Delhi', 'Mumbai', 'Kolkata', 'Chennai', 'Bangalore', 'Hyderabad'] },
+                { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'San Francisco', 'Miami'] },
+                { name: 'United Kingdom', cities: ['London', 'Manchester', 'Birmingham', 'Liverpool', 'Leeds', 'Glasgow'] },
+                { name: 'Japan', cities: ['Tokyo', 'Osaka', 'Kyoto', 'Hiroshima', 'Nagoya', 'Fukuoka'] },
+                { name: 'China', cities: ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen', 'Chengdu', 'Wuhan'] },
+                { name: 'Canada', cities: ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Ottawa', 'Edmonton'] },
+                { name: 'Australia', cities: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'] },
+                { name: 'Brazil', cities: ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza', 'Belo Horizonte'] },
+                { name: 'Germany', cities: ['Berlin', 'Munich', 'Hamburg', 'Frankfurt', 'Cologne', 'Stuttgart'] },
+                { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Toulouse', 'Bordeaux'] },
+                { name: 'Italy', cities: ['Rome', 'Milan', 'Naples', 'Florence', 'Venice', 'Turin'] },
+                { name: 'South Korea', cities: ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju'] },
+                { name: 'Singapore', cities: ['Singapore'] },
+                { name: 'Malaysia', cities: ['Kuala Lumpur', 'George Town', 'Johor Bahru', 'Kuching', 'Kota Kinabalu', 'Malacca'] },
+                { name: 'Thailand', cities: ['Bangkok', 'Chiang Mai', 'Phuket', 'Pattaya', 'Ayutthaya', 'Krabi'] },
+                { name: 'Vietnam', cities: ['Hanoi', 'Ho Chi Minh City', 'Da Nang', 'Nha Trang', 'Hue', 'Haiphong'] },
+                { name: 'Pakistan', cities: ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan'] },
+                { name: 'Nepal', cities: ['Kathmandu', 'Pokhara', 'Lalitpur', 'Biratnagar', 'Bhaktapur', 'Bharatpur'] },
+                { name: 'Sri Lanka', cities: ['Colombo', 'Kandy', 'Galle', 'Jaffna', 'Negombo', 'Anuradhapura'] }
+            ];
 
             const countrySelect = document.getElementById('country-select');
             const citySelect = document.getElementById('city-select');
@@ -5025,47 +5126,26 @@ function closePopup(popupId) {
         });
 
         // Chart Initialization
-        const vitaminCtx = document.getElementById('vitaminChart').getContext('2d');
-        const vitaminChart = new Chart(vitaminCtx, {
-            type: 'line',
+        fetch('/vitamin/history')
+        .then(res => res.json())
+        .then(data => {
+        const labels = data.map(r => r.timestamp);
+        const uvValues = data.map(r => r.uv_index);
+
+            new Chart(document.getElementById("vitaminChart"), {
+            type: "line",
             data: {
-                labels: Array.from({length: 7}, (_, i) => {
-                    const d = new Date();
-                    d.setDate(d.getDate() - 6 + i);
-                    return d.toLocaleDateString('en', {weekday: 'short'});
-                }),
-                datasets: [{
-                    label: 'UV Index',
-                    data: Array.from({length: 7}, () => Math.random() * 5 + 3),
-                    borderColor: '#ff9a9e',
-                    backgroundColor: 'rgba(255, 154, 158, 0.2)',
-                    borderWidth: 2,
-                    tension: 0.3,
-                    fill: true
-                }, {
-                    label: 'Recommended Minutes',
-                    data: Array.from({length: 7}, () => Math.random() * 20 + 10),
-                    borderColor: '#a1c4fd',
-                    backgroundColor: 'rgba(161, 196, 253, 0.2)',
-                    borderWidth: 2,
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+            labels: labels,
+            datasets: [{
+                label: "UV Index",
+                data: uvValues,
+                borderColor: "#2e7d32",
+                fill: false
+            }]
+        }
+    });
+});
+
 
         // Resize charts on window resize
         window.addEventListener('resize', function() {
@@ -5503,6 +5583,77 @@ document.querySelectorAll('.attachment-btn').forEach(btn => {
                 if (e.target === overlay) overlay.style.display = 'none';
             });
         });
+
+        function fetchVitaminD(lat, lon) {
+    fetch(`/api/vitamin_d?lat=${lat}&lon=${lon}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("uv-index").innerText = "UV Index: " + data.uv_index;
+            document.getElementById("vitamin-advice").innerText = data.advice;
+        })
+        .catch(err => console.error(err));
+}
+
+navigator.geolocation.getCurrentPosition(pos => {
+    fetchVitaminD(pos.coords.latitude, pos.coords.longitude);
+});
     </script>
+<script>
+// 🌞 Vitamin D Estimator Auto + Manual Fetch
+document.addEventListener("DOMContentLoaded", function () {
+    // Auto fetch using location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+        console.log("Geolocation not supported.");
+    }
+
+    function success(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        fetch('/vitamin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat: lat, lon: lon })
+        })
+        .then(res => res.json())
+        .then(data => updateVitaminResult(data))
+        .catch(err => console.error(err));
+    }
+
+    function error(err) {
+        console.warn("Location not allowed:", err.message);
+        // Optionally prompt user to select manual city
+    }
+
+    // Manual city input (if you have a <select> or <input> for cities)
+    const manualCityBtn = document.getElementById("city-submit-btn");
+    if (manualCityBtn) {
+        manualCityBtn.addEventListener("click", function () {
+            const city = document.getElementById("city-input").value;
+            fetch('/vitamin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ city: city })
+            })
+            .then(res => res.json())
+            .then(data => updateVitaminResult(data))
+            .catch(err => console.error(err));
+        });
+    }
+
+    // Update UI
+    function updateVitaminResult(data) {
+        if (data.error) {
+            document.getElementById("vitamin-result").innerHTML = 
+                `<p style="color:red;">${data.error}</p>`;
+        } else {
+            document.getElementById("uv-index").textContent = data.uv_index;
+            document.getElementById("vitamin-status").textContent = data.vitamin_status;
+        }
+    }
+});
+</script>
 </body>
 </html>

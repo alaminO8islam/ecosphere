@@ -12,15 +12,12 @@ verification_store = {}
 def guest_login():
     random_id = random.randint(100000, 999999)
     guest_user = User(
-        email=None,
-        first_name=f"Guest_{random_id}",
-        last_name="",
-        name=f"Guest_{random_id}",
-        avatar="default-avatar.png",
-        guest=True,
-        rank=1,
-        progress=0
+        first_name=f"Guest_{random_id}" # pyright: ignore[reportCallIssue]
     )
+    guest_user.progress = 0
+    guest_user.rank = 1
+    guest_user.guest = True
+    guest_user.avatar = "default-avatar.png"
     db.session.add(guest_user)
     db.session.commit()
     session['user_id'] = guest_user.id
@@ -103,30 +100,37 @@ def verify_code():
     new_user = User(**user_data)
     db.session.add(new_user)
     db.session.commit()
+    
     session['user_id'] = new_user.id
     session['guest'] = False
+    
     del verification_store[email]
     
-    return jsonify({"message": "Verified. Now ask for birthday."})
+    return jsonify({
+        "message": "Verified. Now ask for birthday.",
+        "user_id": new_user.id  # Return user_id for frontend reference
+    })
 
 @bp.route('/save_birthday', methods=['POST'])
 def save_birthday():
     data = request.get_json()
     birthday_str = data.get("birthday")
+    user_id = data.get("user_id") or session.get('user_id') 
 
     try:
         birthday_date = datetime.strptime(birthday_str, "%Y-%m-%d").date()
-
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid birthday format."}), 400
 
-    user = User.query.get(session.get('user_id'))
+    user = User.query.get(user_id)
     if user:
         user.birthday = birthday_date
         db.session.commit()
+        if not session.get('user_id'):
+            session['user_id'] = user.id
+            session['guest'] = False
         return jsonify({"message": "Birthday saved. Welcome!"})
     return jsonify({"error": "User not found"}), 404
-
 
 @bp.route('/logout', methods=['POST'])
 def logout():

@@ -1,14 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
-from .routes import main
 import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+migrate = Migrate()
 
 def create_app():
     load_dotenv()
@@ -20,19 +20,22 @@ def create_app():
     db.init_app(app)
     CORS(app)
     login_manager.init_app(app)
+    login_manager.login_view = None
+    migrate.init_app(app, db)
 
     from .models import User
-
     @login_manager.user_loader
     def load_user(user_id):
-        from .models import User
         return User.query.get(int(user_id))
 
-
-    from .routes import auth, dashboard, main, carbon
-    app.register_blueprint(carbon.bp)
+    # Import and register blueprints AFTER db + login are set up
+    from .routes import auth, dashboard, main, carbon, vitamin, notes, notifications
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(main.bp)
+    app.register_blueprint(carbon.bp)
+    app.register_blueprint(vitamin.bp)
+    app.register_blueprint(notes.bp)
+    app.register_blueprint(notifications.bp)
 
     return app

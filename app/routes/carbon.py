@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify, session
-from ..models import db, CarbonLog
+from flask import Blueprint, request, jsonify, session, render_template
+from ..models import db, CarbonLog, User
 from datetime import datetime
 
 bp = Blueprint('carbon', __name__, url_prefix='/api/carbon')
@@ -21,25 +21,23 @@ def log_carbon():
     transport = float(data.get("transport", 0))
     energy = float(data.get("energy", 0))
 
-    # CO₂ emission calculation
     total_emission = (
         food * EMISSION_FACTORS["food"] +
         transport * EMISSION_FACTORS["transport"] +
         energy * EMISSION_FACTORS["energy"]
     )
 
-    # Save carbon log
     log = CarbonLog(
-        user_id=user_id,
-        food=food,
-        transport=transport,
-        energy=energy,
-        logged_at=datetime.utcnow()
+        user_id = user_id,
+        food = food,
+        transport = transport,
+        energy = energy,
+        logged_at = datetime.utcnow()
     )
     db.session.add(log)
 
     # Update user progress + rank
-    user = db.session.get(CarbonLog.user.property.mapper.class_, user_id)
+    user = db.session.get(User, user_id)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -81,3 +79,15 @@ def carbon_history():
     } for log in reversed(logs)]
 
     return jsonify(history)
+
+@bp.route('/transport')
+def transport_calculator():
+    return render_template('transport.html')
+
+@bp.route('/food')
+def food_calculator():
+    return render_template('food.html')
+
+@bp.route('/energy')
+def energy_calculator():
+    return render_template('energy.html')

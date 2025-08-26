@@ -94,11 +94,6 @@ ecosphere/
 │ │ ├── notes.py
 │ │ ├── notifications.py
 │ │ └── vitamin.py
-│ ├── static/
-│ │ ├── css/
-│ │ │ └── dashboard.css
-│ │ └── js/
-│ │ └── dashboard.js ← (your inline JS is actually in dashboard.html)
 │ └── templates/
 │ ├── dashboard.html
 │ ├── energy.html
@@ -132,4 +127,5 @@ python run.py
 ## 🤝 Contributing
 
 Coming soon. For now, follow our branching strategy below ↓
+
 

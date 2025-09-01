@@ -70,32 +70,38 @@ All forms (login, profile editing, verification) use modal popups for seamless U
 
 ---
 
-### 📁 Project Structure
+## Project Structure
 
 ```
-├── .venv/                      # Virtual environment (hidden)
+ecosphere/
+├── .gitignore
+├── README.md
+├── requirements.txt
+├── run.py
+├── config.py
+├── ecosphere_schema.sql
+├── instance/
+│ └── default.db
 ├── app/
-│   ├── routes/                 # Application route handlers
-│   │   ├── __init__.py
-│   │   ├── auth.py             # Authentication routes
-│   │   ├── carbon.py           # Carbon footprint related routes
-│   │   ├── dashboard.py        # Dashboard-related routes
-│   │   ├── notes.py            # Notes feature routes
-│   │   └── notifications.py    # Notification-related routes
-│   ├── static/                 # Static HTML files
-│   │   ├── dashboard.html
-│   │   └── index.html
-│   ├── templates/              # Jinja2 HTML templates
-│   │   └── __init__.py
-│   └── models.py               # Database models
-├── .env                        # Environment variables
-├── config.py                   # App configuration
-├── ecosphere_schema.sql        # SQL schema for database
-├── README.md                   # Project documentation
-├── requirements.txt            # Python dependencies
-└── run.py                      # Entry point to run the application
-```
+│ ├── init.py
+│ ├── models.py
+│ ├── routes/
+│ │ ├── init.py
+│ │ ├── auth.py
+│ │ ├── carbon.py
+│ │ ├── dashboard.py
+│ │ ├── main.py
+│ │ ├── notes.py
+│ │ ├── notifications.py
+│ │ └── vitamin.py
+│ └── templates/
+│ ├── dashboard.html
+│ ├── energy.html
+│ ├── food.html
+│ ├── index.html
+│ └── transport.html
 
+```
 ---
 
 ## 🚀 How to Run (Local Dev)
@@ -121,3 +127,5 @@ python run.py
 ## 🤝 Contributing
 
 Coming soon. For now, follow our branching strategy below ↓
+
+

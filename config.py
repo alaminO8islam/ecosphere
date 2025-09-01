@@ -1,1 +1,4 @@
-OPENWEATHER_API_KEY = "469f9ee790b69666f3a5a88336719cd0"
+import os
+
+# Read from environment
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY", "")

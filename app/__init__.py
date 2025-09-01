@@ -15,12 +15,12 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///default.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.secret_key = os.getenv('SECRET_KEY', 'your-default-secret')
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-default-secret')
+
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     db.init_app(app)
-    CORS(app)
     login_manager.init_app(app)
-    login_manager.login_view = None
     migrate.init_app(app, db)
 
     from .models import User
@@ -37,5 +37,8 @@ def create_app():
     app.register_blueprint(vitamin.bp)
     app.register_blueprint(notes.bp)
     app.register_blueprint(notifications.bp)
+
+    from .routes.env import bp as env_bp
+    app.register_blueprint(env_bp, url_prefix="/api/env")
 
     return app

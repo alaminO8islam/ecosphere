@@ -1,14 +1,21 @@
 CREATE DATABASE IF NOT EXISTS ecosphere;
 USE ecosphere;
 
+DROP TABLE IF EXISTS note, carbon_log, dashboard_data, notification, users;
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255),
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
     name VARCHAR(255),
-    avatar VARCHAR(255),
-    `rank` VARCHAR(50),
+    password VARCHAR(255),
+    avatar VARCHAR(255) DEFAULT 'default-avatar.png',
+    user_rank INT DEFAULT 1,
     progress INT DEFAULT 0,
-    guest BOOLEAN DEFAULT FALSE
+    guest BOOLEAN DEFAULT FALSE,
+    birthday DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE notification (
@@ -49,3 +56,4 @@ CREATE TABLE note (
     content TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

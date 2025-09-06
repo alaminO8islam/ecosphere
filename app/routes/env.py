@@ -80,6 +80,8 @@ def env_now():
                 return jsonify({"error": f"Could not geocode city: {city}"}), 404
             lat, lon, resolved_city = got
         else:
+            if lat is None or lon is None:
+                return jsonify({"error": "Latitude and longitude must be provided."}), 400
             lat = float(lat)
             lon = float(lon)
     except Exception as e:

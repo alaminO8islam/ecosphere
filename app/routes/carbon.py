@@ -28,11 +28,11 @@ def log_carbon():
     )
 
     log = CarbonLog(
-        user_id = user_id,
-        food = food,
-        transport = transport,
-        energy = energy,
-        logged_at = datetime.utcnow()
+        user_id=user_id,
+        food=food,
+        transport=transport,
+        energy=energy,
+        logged_at=datetime.utcnow()
     )
     db.session.add(log)
 
@@ -46,7 +46,7 @@ def log_carbon():
     user.progress += gain
 
     if user.progress >= 100:
-        user.rank = str(int(user.rank or 1) + 1)
+        user.user_rank = int(user.user_rank or 1) + 1  # ← CHANGED: user.rank to user.user_rank
         user.progress = 0
 
     db.session.commit()
@@ -55,7 +55,7 @@ def log_carbon():
         "message": "Carbon data logged",
         "total_emission": total_emission,
         "progress": user.progress,
-        "rank": user.rank
+        "rank": user.user_rank  # ← CHANGED: user.rank to user.user_rank
     })
 
 @bp.route('/history', methods=['GET'])

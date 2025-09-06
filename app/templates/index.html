@@ -1430,8 +1430,8 @@
   }
 
   // ====================== FORM HANDLING ====================== //
-  // Create Account Form Submission
-  document.getElementById('createAccountForm')?.addEventListener('submit', async (e) => {
+// Create Account Form Submission
+document.getElementById('createAccountForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const first = document.getElementById('firstName').value;
@@ -1441,34 +1441,41 @@
     const confirmPassword = document.getElementById('confirmPassword').value;
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+        alert('Passwords do not match!');
+        return;
     }
 
     try {
-      const response = await fetch('/api/auth/create_account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ first_name: first, last_name: last, email, password })
-      });
+        const response = await fetch('/api/auth/create_account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ first_name: first, last_name: last, email, password })
+        });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        document.getElementById('code-display').textContent = data.code;
-        closeModal('createAccountModal');
-        openModal('verifyCodeModal');
-        startTimer();
-      } else {
-        alert(data.error || 'Account creation failed.');
-      }
+        // First check if response is OK (status 200-299)
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('code-display').textContent = data.code;
+            closeModal('createAccountModal');
+            openModal('verifyCodeModal');
+            startTimer();
+        } else {
+            // If response is not OK, try to get error message
+            try {
+                const errorData = await response.json();
+                alert(errorData.error || errorData.message || `Account creation failed (Status: ${response.status})`);
+            } catch (parseError) {
+                // If we can't parse JSON error, show generic error
+                alert(`Server error: ${response.status} ${response.statusText}`);
+            }
+        }
     } catch (err) {
-      console.error(err);
-      alert('Error during account creation.');
+        console.error('Network error:', err);
+        alert('Network error. Please check your connection and try again.');
     }
-  });
+});
 
- document.getElementById('verifyCodeForm')?.addEventListener('submit', async (e) => {
+document.getElementById('verifyCodeForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = document.getElementById('createEmail').value;
@@ -1481,18 +1488,22 @@
             body: JSON.stringify({ email, code: enteredCode })
         });
 
-        const data = await response.json();
-
         if (response.ok) {
+            const data = await response.json();
             window.verifiedUserId = data.user_id;
             closeModal('verifyCodeModal');
             openModal('birthdayModal');
         } else {
-            alert(data.error || 'Verification failed.');
+            try {
+                const errorData = await response.json();
+                alert(errorData.error || errorData.message || 'Verification failed.');
+            } catch (parseError) {
+                alert(`Verification error: ${response.status}`);
+            }
         }
     } catch (err) {
-        console.error(err);
-        alert('Verification error.');
+        console.error('Network error:', err);
+        alert('Network error during verification.');
     }
 });
 
@@ -1511,16 +1522,19 @@
             })
         });
 
-        const data = await response.json();
-
         if (response.ok) {
             window.location.href = '/dashboard';
         } else {
-            alert(data.error || 'Saving birthday failed.');
+            try {
+                const errorData = await response.json();
+                alert(errorData.error || errorData.message || 'Saving birthday failed.');
+            } catch (parseError) {
+                alert(`Birthday save error: ${response.status}`);
+            }
         }
     } catch (err) {
-        console.error(err);
-        alert('Error submitting birthday.');
+        console.error('Network error:', err);
+        alert('Network error submitting birthday.');
     }
 });
 

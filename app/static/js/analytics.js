@@ -420,7 +420,7 @@ function initializeAirQualityChart() {
                     pointBackgroundColor: 'rgb(138, 43, 226)',
                     pointRadius: 3,
                     pointHoverRadius: 5,
-                    fill: false,
+                    fill: true,
                     tension: 0.4
                 },
                 {
@@ -432,7 +432,7 @@ function initializeAirQualityChart() {
                     pointBackgroundColor: 'rgb(65, 105, 225)',
                     pointRadius: 3,
                     pointHoverRadius: 5,
-                    fill: false,
+                    fill: true,
                     tension: 0.4
                 }
             ]

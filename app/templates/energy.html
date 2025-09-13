@@ -49,6 +49,28 @@
             color: white;
             padding: 20px;
             text-align: center;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .calculator-icon {
@@ -359,6 +381,7 @@
 <body>
     <div class="calculator-container">
         <div class="calculator-header">
+            <button class="back-button" onclick="window.location.href='/dashboard'"><i class="fas fa-arrow-left"></i> Back</button>
             <div class="calculator-icon">
                 <i class="fas fa-bolt"></i>
             </div>

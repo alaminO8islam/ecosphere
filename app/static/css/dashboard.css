@@ -132,7 +132,8 @@ body {
   background-color: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   transition: background-color var(--transition-slow), color var(--transition-slow);
@@ -221,6 +222,10 @@ a:hover {
         .dashboard {
             display: flex;
             min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+            overflow-x: hidden;
         }
 
 .sidebar {
@@ -231,7 +236,7 @@ a:hover {
   position: fixed;
   height: 100vh;
   z-index: var(--z-index-fixed);
-  overflow-y: hidden;
+  overflow-y: auto;
   box-shadow: 4px 0 18px rgba(0, 0, 0, 0.1);
   transform-style: preserve-3d;
   transform: perspective(1000px) rotateY(0deg);
@@ -2485,8 +2490,9 @@ a:hover {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            z-index: 1000;
+            z-index: var(--z-index-modal);
             font-family: 'Poppins', sans-serif;
+            max-width: 100%;
         }
 
         /* Floating Button */
@@ -2540,6 +2546,7 @@ a:hover {
             bottom: 84px;
             right: 0;
             width: 380px;
+            max-width: calc(100vw - 48px);
             max-height: 600px;
             display: none;
             flex-direction: column;
@@ -3141,6 +3148,7 @@ a:hover {
             
             .ai-container {
                 width: calc(100vw - 32px);
+                max-width: calc(100vw - 32px);
                 max-height: 70vh;
                 bottom: 72px;
                 right: 16px;
@@ -3154,11 +3162,27 @@ a:hover {
             
             .quick-btn {
                 min-width: 100%;
+                padding: 8px;
+                font-size: 12px;
+            }
+            
+            .quick-btn i {
+                margin-right: 4px;
+            }
+            
+            .quick-btn span {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
         @media (max-width: 900px) {
             .dashboard-content {
                 grid-template-columns: 1fr;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+                padding: 20px;
             }
             .stats-section {
                 grid-template-columns: 1fr;
@@ -3176,6 +3200,10 @@ a:hover {
             .sidebar .logo span,
             .sidebar .menu li a span {
                 display: none;
+            }
+            .dashboard-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
             }
             /* Keep dark mode toggle visible in mobile */
             .dark-mode-toggle span {
@@ -3389,4 +3417,33 @@ a:hover {
     font-weight: 700;
     font-size: 1.2rem;
     color: var(--primary-dark);
+}
+
+/* Comment Button Styles */
+.btn-comment {
+    background: linear-gradient(to right, var(--primary-dark), var(--primary));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-comment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+}
+
+.dark-mode .btn-comment {
+    background: linear-gradient(to right, var(--primary-dark), var(--primary));
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }

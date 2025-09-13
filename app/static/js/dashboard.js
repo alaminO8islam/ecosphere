@@ -670,20 +670,21 @@ function initializeAIAssistant() {
     let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
     
     // Toggle AI Assistant
-    if (aiAssistantBtn && aiAssistant) {
+    const aiAssistantContainer = document.getElementById('aiAssistantContainer');
+    if (aiAssistantBtn && aiAssistantContainer) {
         aiAssistantBtn.addEventListener('click', function() {
-            aiAssistant.classList.toggle('active');
+            aiAssistantContainer.classList.toggle('active');
             // Focus input when opening
-            if (aiAssistant.classList.contains('active') && aiInput) {
+            if (aiAssistantContainer.classList.contains('active') && aiInput) {
                 setTimeout(() => aiInput.focus(), 300);
             }
         });
     }
     
     // Close AI Assistant
-    if (aiAssistantClose && aiAssistant) {
+    if (aiAssistantClose && aiAssistantContainer) {
         aiAssistantClose.addEventListener('click', function() {
-            aiAssistant.classList.remove('active');
+            aiAssistantContainer.classList.remove('active');
         });
     }
     

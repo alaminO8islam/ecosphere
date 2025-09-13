@@ -1847,92 +1847,7 @@
             </div>
         </div>
 
-        <!-- Settings Page -->
-        <div id="settings-page" class="page-content">
-            <div class="page-header">
-                <h1>Settings</h1>
-                <div class="actions">
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search...">
-                    </div>
-                    <div class="notifications" id="notificationsBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
-                    </div>
-                    <div class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h2>System Settings</h2>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Automatic Updates</h3>
-                        <p>Keep system up to date</p>
-                    </div>
-                    <label class="settings-toggle">
-                        <input type="checkbox" checked>
-                        <span class="settings-slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Data Backup</h3>
-                        <p>Daily backup to cloud</p>
-                    </div>
-                    <label class="settings-toggle">
-                        <input type="checkbox" checked>
-                        <span class="settings-slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Maintenance Mode</h3>
-                        <p>Temporarily disable system</p>
-                    </div>
-                    <label class="settings-toggle">
-                        <input type="checkbox">
-                        <span class="settings-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h2>Notification Settings</h2>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Email Alerts</h3>
-                        <p>Receive email notifications</p>
-                    </div>
-                    <label class="settings-toggle">
-                        <input type="checkbox" checked>
-                        <span class="settings-slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Push Notifications</h3>
-                        <p>Mobile app alerts</p>
-                    </div>
-                    <label class="settings-toggle">
-                        <input type="checkbox" checked>
-                        <span class="settings-slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>SMS Alerts</h3>
-                        <p>Critical alerts via SMS</p>
-                    </div>
-                    <label class="settings-toggle">
-                        <input type="checkbox">
-                        <span class="settings-slider"></span>
-                    </label>
-                </div>
-            </div>
+        <!-- Settings Page will be displayed from the second instance -->
 
     <!-- Article Detail View -->
     <div id="articleViewModal" class="article-detail-view">
@@ -2044,13 +1959,13 @@
             <div class="ai-input">
                 <div class="quick-actions">
                     <button class="quick-btn eco-tip" data-action="footprint">
-                        <i class="fas fa-shoe-prints"></i> Footprint Tips
+                        <i class="fas fa-shoe-prints"></i> <span>Footprint Tips</span>
                     </button>
                     <button class="quick-btn eco-tip" data-action="vitaminD">
-                        <i class="fas fa-sun"></i> Sunlight Advice
+                        <i class="fas fa-sun"></i> <span>Sunlight Advice</span>
                     </button>
                     <button class="quick-btn eco-tip" data-action="recycling">
-                        <i class="fas fa-recycle"></i> Recycling Guide
+                        <i class="fas fa-recycle"></i> <span>Recycling Guide</span>
                     </button>
                 </div>
                 <div class="input-wrapper">
@@ -2156,8 +2071,95 @@
                 </div>
             </div>
         </div>
+
+     <!-- Settings Page -->
+        <div id="settings-page" class="page-content">
+            <div class="page-header">
+                <h1>Settings</h1>
+                <div class="actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>System Settings</h2>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Automatic Updates</h3>
+                        <p>Keep system up to date</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Data Backup</h3>
+                        <p>Daily backup to cloud</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Maintenance Mode</h3>
+                        <p>Temporarily disable system</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox">
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>Notification Settings</h2>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Email Alerts</h3>
+                        <p>Receive email notifications</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Push Notifications</h3>
+                        <p>Mobile app alerts</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>SMS Alerts</h3>
+                        <p>Critical alerts via SMS</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox">
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
-    
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Set up event listeners for edit modal
@@ -2376,6 +2378,67 @@
             }
         };
         
+        // Load comments function
+        function loadComments(articleId) {
+            fetch(`/api/comments/article/${articleId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(comments => {
+                    const commentsContainer = document.getElementById('commentsContainer');
+                    if (!commentsContainer) return;
+                    
+                    commentsContainer.innerHTML = '';
+                    
+                    if (comments.length === 0) {
+                        commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+                        return;
+                    }
+                    
+                    comments.forEach(comment => {
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'comment';
+                        commentElement.innerHTML = `
+                            <div class="comment-header">
+                                <span class="comment-author">${comment.user_name}</span>
+                                <span class="comment-date">${new Date(comment.created_at).toLocaleString()}</span>
+                            </div>
+                            <div class="comment-content">${comment.content}</div>
+                            <div class="comment-actions">
+                                <button onclick="showReplyForm(${comment.id})" class="reply-btn">Reply</button>
+                                ${comment.is_owner ? `<button onclick="deleteComment(${comment.id})" class="delete-btn">Delete</button>` : ''}
+                            </div>
+                            <div id="replyForm-${comment.id}" class="reply-form" style="display: none;">
+                                <textarea id="replyInput-${comment.id}" placeholder="Write a reply..."></textarea>
+                                <div class="reply-actions">
+                                    <button onclick="submitReply(${comment.id})" class="submit-reply-btn">Submit</button>
+                                    <button onclick="hideReplyForm(${comment.id})" class="cancel-reply-btn">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="replies" id="replies-${comment.id}">
+                                ${comment.replies && comment.replies.length > 0 ? comment.replies.map(reply => `
+                                    <div class="reply">
+                                        <div class="reply-header">
+                                            <span class="reply-author">${reply.user_name}</span>
+                                            <span class="reply-date">${new Date(reply.created_at).toLocaleString()}</span>
+                                        </div>
+                                        <div class="reply-content">${reply.content}</div>
+                                        ${reply.is_owner ? `<div class="reply-actions"><button onclick="deleteReply(${reply.id})" class="delete-btn">Delete</button></div>` : ''}
+                                    </div>
+                                `).join('') : ''}
+                            </div>
+                        `;
+                        commentsContainer.appendChild(commentElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading comments:', error);
+                });
+        }
+        
         // Submit comment
         if (submitCommentBtn) {
             submitCommentBtn.addEventListener('click', function() {
@@ -2392,13 +2455,12 @@
                     return;
                 }
                 
-                fetch('/api/comments/', {
+                fetch(`/api/comments/article/${articleId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        article_id: articleId,
                         content: content
                     })
                 })
@@ -2453,13 +2515,12 @@
                 return;
             }
             
-            fetch('/api/comments/reply/', {
+            fetch(`/api/comments/reply/${commentId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    comment_id: commentId,
                     content: content
                 })
             })

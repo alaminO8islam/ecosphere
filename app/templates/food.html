@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Carbon Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #c0392b;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .calculator-container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background: white;
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+        }
+        
+        .calculator-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .calculator-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .calculator-title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .calculator-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .calculator-body {
+            padding: 20px;
+            height: calc(100vh - 130px); /* Adjust based on header height */
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        
+        .calculator-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .calculator-body::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+        }
+        
+        .calculator-body::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            scrollbar-width: thin;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .category-tabs::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        
+        .category-tab {
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            margin-right: 8px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab:hover {
+            background: #e0e0e0;
+        }
+        
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .item-card {
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .item-card.selected {
+            border-color: var(--primary-color);
+            background: #ffebee;
+        }
+        
+        .item-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .item-details {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .impact-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .impact-high { background: #ffebee; color: #c62828; }
+        .impact-medium { background: #fff3e0; color: #ef6c00; }
+        .impact-low { background: #e8f5e9; color: #2e7d32; }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, var(--success-color), #27ae60);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .result-details {
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .result-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .result-detail i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .impact-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .suggestion {
+            background: rgba(0,0,0,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .btn-again {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-again:hover {
+            background: rgba(255,255,255,0.4);
+        }
+        
+        @media (max-width: 480px) {
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .calculator-body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <div class="calculator-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h1 class="calculator-title">Food Carbon Calculator</h1>
+            <p class="calculator-subtitle">Calculate your dietary carbon footprint</p>
+        </div>
+        
+        <div class="calculator-body">
+            <form id="foodForm">
+                <div class="category-tabs" id="categoryTabs">
+                    <!-- Tabs will be populated by JavaScript -->
+                </div>
+                
+                <div class="items-grid" id="foodItemsGrid">
+                    <!-- Food items will be populated by JavaScript -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Amount Consumed</label>
+                    <input type="number" step="1" min="1" class="form-control" id="amount" placeholder="Enter amount in grams" required>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.close()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                </div>
+            </form>
+            
+            <div id="resultCard" class="result-card">
+                <div class="result-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div id="resultText"></div>
+                <button class="btn btn-again" onclick="window.location.reload()">
+                    <i class="fas fa-redo"></i> Calculate Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Food categories and items from carbon.py
+        const foodCategories = {
+            "Meats & Poultry": {
+                "beef": { factor: 27.0, icon: "fa-drumstick-bite" },
+                "mutton": { factor: 24.0, icon: "fa-drumstick-bite" },
+                "chicken": { factor: 6.9, icon: "fa-drumstick-bite" },
+                "pork": { factor: 7.5, icon: "fa-drumstick-bite" },
+                "lamb": { factor: 20.0, icon: "fa-drumstick-bite" },
+                "turkey": { factor: 10.9, icon: "fa-drumstick-bite" },
+                "processed_meat": { factor: 11.0, icon: "fa-drumstick-bite" }
+            },
+            "Fish & Seafood": {
+                "fish_tilapia": { factor: 3.0, icon: "fa-fish" },
+                "fish_salmon": { factor: 5.0, icon: "fa-fish" },
+                "prawn": { factor: 12.0, icon: "fa-fish" },
+                "shrimp": { factor: 11.0, icon: "fa-fish" },
+                "crab": { factor: 10.0, icon: "fa-fish" },
+                "oyster": { factor: 2.5, icon: "fa-fish" }
+            },
+            "Dairy & Eggs": {
+                "milk": { factor: 1.9, icon: "fa-cheese" },
+                "cheese": { factor: 10.0, icon: "fa-cheese" },
+                "yogurt": { factor: 2.2, icon: "fa-cheese" },
+                "egg": { factor: 4.8, icon: "fa-egg" },
+                "butter": { factor: 9.0, icon: "fa-cheese" },
+                "cream": { factor: 7.0, icon: "fa-cheese" }
+            },
+            "Grains & Cereals": {
+                "rice": { factor: 2.7, icon: "fa-bread-slice" },
+                "wheat": { factor: 1.4, icon: "fa-bread-slice" },
+                "bread": { factor: 1.0, icon: "fa-bread-slice" },
+                "pasta": { factor: 1.2, icon: "fa-bread-slice" },
+                "oats": { factor: 1.2, icon: "fa-bread-slice" },
+                "cornflakes": { factor: 1.8, icon: "fa-bread-slice" }
+            },
+            "Vegetables": {
+                "potato": { factor: 0.3, icon: "fa-carrot" },
+                "tomato": { factor: 0.4, icon: "fa-carrot" },
+                "onion": { factor: 0.4, icon: "fa-carrot" },
+                "carrot": { factor: 0.3, icon: "fa-carrot" },
+                "broccoli": { factor: 0.6, icon: "fa-carrot" },
+                "spinach": { factor: 0.2, icon: "fa-carrot" }
+            },
+            "Fruits": {
+                "banana": { factor: 0.6, icon: "fa-apple-alt" },
+                "apple": { factor: 0.4, icon: "fa-apple-alt" },
+                "orange": { factor: 0.5, icon: "fa-apple-alt" },
+                "avocado": { factor: 1.0, icon: "fa-apple-alt" },
+                "mango": { factor: 0.7, icon: "fa-apple-alt" },
+                "watermelon": { factor: 0.3, icon: "fa-apple-alt" }
+            },
+            "Fast Food": {
+                "beef_burger": { factor: 4.5, icon: "fa-hamburger" },
+                "chicken_burger": { factor: 3.0, icon: "fa-hamburger" },
+                "pizza_slice": { factor: 4.0, icon: "fa-pizza-slice" },
+                "fried_chicken": { factor: 6.5, icon: "fa-drumstick-bite" },
+                "hot_dog": { factor: 3.0, icon: "fa-hotdog" },
+                "taco": { factor: 4.0, icon: "fa-utensils" }
+            }
+        };
+
+        let selectedFoodItem = null;
+        let currentCategory = null;
+        
+        // Initialize category tabs
+        const categoryTabs = document.getElementById('categoryTabs');
+        Object.keys(foodCategories).forEach(category => {
+            const tab = document.createElement('div');
+            tab.className = 'category-tab';
+            tab.textContent = category;
+            tab.dataset.category = category;
+            tab.addEventListener('click', () => loadFoodItems(category));
+            categoryTabs.appendChild(tab);
+        });
+        
+        // Load first category by default
+        if (Object.keys(foodCategories).length > 0) {
+            currentCategory = Object.keys(foodCategories)[0];
+            categoryTabs.children[0].classList.add('active');
+            loadFoodItems(currentCategory);
+        }
+        
+        // Load food items for a category
+        function loadFoodItems(category) {
+            currentCategory = category;
+            const foodItemsGrid = document.getElementById('foodItemsGrid');
+            foodItemsGrid.innerHTML = '';
+            
+            // Update active tab
+            Array.from(categoryTabs.children).forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === category);
+            });
+            
+            // Add food items
+            for (const [item, data] of Object.entries(foodCategories[category])) {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.dataset.item = item;
+                card.innerHTML = `
+                    <div class="item-icon">
+                        <i class="fas ${data.icon}"></i>
+                    </div>
+                    <h4 class="item-name">${item.replace(/_/g, ' ')}</h4>
+                    <p class="item-details">${data.factor} kg CO₂ per kg</p>
+                    <span class="impact-badge ${getImpactClass(data.factor)}">${getImpactLevel(data.factor)}</span>
+                `;
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedFoodItem = { name: item, ...data };
+                });
+                foodItemsGrid.appendChild(card);
+            }
+        }
+        
+        function getImpactLevel(factor) {
+            if (factor > 10) return 'High';
+            if (factor > 2) return 'Medium';
+            return 'Low';
+        }
+        
+        function getImpactClass(factor) {
+            if (factor > 10) return 'impact-high';
+            if (factor > 2) return 'impact-medium';
+            return 'impact-low';
+        }
+        
+        function getSuggestion(factor) {
+            if (factor > 10) return 'Consider reducing consumption of high-impact meats. Try plant-based alternatives.';
+            if (factor > 2) return 'Moderate impact foods can be enjoyed in moderation as part of a balanced diet.';
+            return 'Low impact foods are great choices for sustainable eating.';
+        }
+        
+        // Form submission
+        document.getElementById('foodForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedFoodItem) {
+                alert('Please select a food item');
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            const carbonEmission = (selectedFoodItem.factor / 1000) * amount; // Convert to kg CO₂ per gram
+            
+            // Send data to server
+            fetch('/api/carbon/api/log', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    transport: 0,
+                    food: carbonEmission,
+                    energy: 0
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Carbon footprint logged successfully:', data);
+                // Notify parent window to update dashboard
+                if (window.opener) {
+                    window.opener.postMessage({ type: 'carbon_update', category: 'food', value: carbonEmission }, '*');
+                }
+            })
+            .catch(error => {
+                console.error('Error logging carbon footprint:', error);
+            });
+            
+            const resultCard = document.getElementById('resultCard');
+            const resultText = document.getElementById('resultText');
+            
+            resultText.innerHTML = `
+                <div class="result-value">${carbonEmission.toFixed(2)} kg CO₂</div>
+                
+                <div class="result-details">
+                    <div class="result-detail">
+                        <i class="fas ${selectedFoodItem.icon}"></i>
+                        <span>Food: ${selectedFoodItem.name.replace(/_/g, ' ')}</span>
+                    </div>
+                    <div class="result-detail">
+                        <i class="fas fa-weight"></i>
+                        <span>Amount: ${amount} grams</span>
+                    </div>
+                    <div class="result-detail">
+                        <i class="fas fa-bolt"></i>
+                        <span>Emission Factor: ${selectedFoodItem.factor} kg/kg</span>
+                    </div>
+                </div>
+                
+                <div class="impact-tag">
+                    <i class="fas ${getImpactClass(selectedFoodItem.factor) === 'impact-high' ? 'fa-exclamation-triangle' : 
+                                   getImpactClass(selectedFoodItem.factor) === 'impact-medium' ? 'fa-info-circle' : 'fa-check-circle'}"></i>
+                    ${getImpactLevel(selectedFoodItem.factor)} Impact
+                </div>
+                
+                <div class="suggestion">
+                    <i class="fas fa-lightbulb"></i> ${getSuggestion(selectedFoodItem.factor)}
+                </div>
+            `;
+            
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

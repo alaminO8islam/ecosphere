@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSphere Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <!-- Link to external CSS using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    <style>
+        
+        /* Article view content styles moved to the top */
+        
+        .article-view-image {
+            width: 100%;
+            height: 400px; /* Increased height */
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .article-view-body {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .article-view-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .article-view-text {
+            line-height: 1.8;
+            color: var(--text-primary);
+            font-size: 16px; /* Increased font size */
+            margin-bottom: 30px; /* Add more space at bottom */
+        }
+        
+        /* Article Detail View Styles */
+        .article-detail-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .article-detail-container {
+            display: flex;
+            flex-direction: column;
+            max-width: calc(100% - 250px);
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        .article-detail-header {
+            margin-bottom: 20px;
+        }
+        
+        .article-detail-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .article-detail-image {
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .article-detail-content {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .content-text {
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 30px;
+        }
+        
+        .content-text h2 {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .content-text p {
+            margin-bottom: 20px;
+        }
+        
+        /* Back button container styles moved to the top */
+        
+        .back-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #3e8e41;
+        }
+        
+        .comments-section {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comments-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .comments-section h3 i {
+            color: var(--primary-color);
+        }
+        
+        .comments-count {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: normal;
+            margin-left: 5px;
+        }
+        
+        .comment-form {
+            margin-bottom: 30px;
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+            font-family: inherit;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+        
+        .comment-form textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .btn-comment {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            float: right;
+        }
+        
+        .btn-comment:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .comments-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .comment {
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .comment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .comment-author::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+        }
+        
+        .comment-date {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .comment-content {
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .comment-actions {
+            margin-top: 10px;
+        }
+        
+        .comment-action {
+            color: #4CAF50;
+            cursor: pointer;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .reply-form {
+            display: none;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .reply-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        
+        .replies-container {
+            margin-top: 15px;
+            margin-left: 20px;
+            border-left: 2px solid #ddd;
+            padding-left: 15px;
+        }
+        
+        .reply {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .no-comments {
+            color: #888;
+            font-style: italic;
+        }
+        
+        .article-view-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .article-view-image {
+            width: 100%;
+            height: 40vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .article-view-body {
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .article-view-body h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .article-view-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            color: var(--muted-text);
+            font-size: 0.9rem;
+        }
+        
+        .article-view-text {
+            line-height: 1.8;
+            color: var(--text-color);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        /* Comments Section Styles */
+        .article-comments-section {
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
+        
+        .article-comments-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .comment-form {
+            margin-bottom: 30px;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 10px;
+        }
+        
+        .btn-comment {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-comment:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .comments-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .comment {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .comment-date {
+            color: var(--muted-text);
+            font-size: 0.85rem;
+        }
+        
+        .comment-content {
+            color: var(--text-color);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .comment-action {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+        
+        .comment-action:hover {
+            color: var(--primary-color);
+        }
+        
+        .comment-action i {
+            font-size: 0.85rem;
+        }
+        
+        .replies-container {
+            margin-left: 40px;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .replies-container::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+        
+        .reply {
+            background-color: var(--card-bg);
+            border-left: 3px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .reply:hover {
+            transform: translateX(3px);
+        }
+        
+        .reply-form {
+            margin-top: 15px;
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .reply-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 10px;
+            font-family: inherit;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+        
+        .reply-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-cancel-reply {
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit-reply {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .reply-form {
+            margin-top: 15px;
+            margin-left: 30px;
+            display: none;
+        }
+        
+        .reply-form textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- Mobile Menu Toggle -->
+    <div class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <span>EcoSphere</span>
+        </div>
+        <ul class="menu">
+            <li class="active"><a href="#" data-page="dashboard-page"><i class="fas fa-cloud-sun-rain"></i> <span>Forecast</span></a></li>
+            <li><a href="#" data-page="analytics-page"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+            <li><a href="#" data-page="carbon-footprint-page"><i class="fas fa-smog"></i> <span>Carbon Footprint</span></a></li>
+            <li><a href="#" data-page="vitamin-d-page"><i class="fas fa-user-md"></i> <span>Vitamin D</span></a></li>
+            <li><a href="#" data-page="progress-page"><i class="fas fa-flag-checkered"></i> <span>Progress</span></a></li>
+            <li><a href="#" data-page="articles-page"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
+            <li><a href="#" data-page="settings-page"><i class="fas fa-tools"></i> <span>Settings</span></a></li>
+        </ul>
+        <div class="dark-mode-toggle">
+            <label class="toggle-switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+            <span>Dark Mode</span>
+        </div>
+    </div>
+
+    <!-- Notification Popup (Moved outside main content to be global) -->
+    <div class="notification-popup" id="notificationPopup">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="notification-clear">Clear All</button>
+        </div>
+        <ul class="notification-list">
+            <li class="notification-item unread">
+                <div class="notification-title">
+                    <i class="fas fa-leaf"></i> Eco Challenge Completed
+                </div>
+                <div class="notification-message">
+                    You've completed the "Reduce Water Usage" challenge!
+                </div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> 2 hours ago
+                </div>
+            </li>
+            <li class="notification-item">
+                <div class="notification-title">
+                    <i class="fas fa-chart-line"></i> Weekly Report
+                </div>
+                <div class="notification-message">
+                    Your weekly carbon footprint report is ready to view.
+                </div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> 1 day ago
+                </div>
+            </li>
+            <li class="notification-item">
+                <div class="notification-title">
+                    <i class="fas fa-trophy"></i> New Badge Earned
+                </div>
+                <div class="notification-message">
+                    You've earned the "Energy Saver" badge for reducing electricity usage.
+                </div>
+                <div class="notification-time">
+                    <i class="far fa-clock"></i> 3 days ago
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page-content">
+            <!-- Navbar -->
+            <div class="navbar">
+                <div class="nav-title">
+                    <h1><span id="current-day"></span> Forecast </h1>
+                    <p>Last updated: Just now</p>
+                </div>
+                <div class="nav-actions">
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Left Column: Stats Cards -->
+                <div class="stats-section">
+                    <!-- First Row -->
+                    <div class="stats-row">
+                        <!-- Temperature Card -->
+                        <div class="stat-card temperature">
+                            <div class="stat-icon temperature">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Temperature</h3>
+                                <p id="temperature-value">
+                                    Loading... - Feels Like <span id="feelslike-value">--</span>
+                                    <span class="trend" id="temperature-trend"></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Humidity Card -->
+                        <div class="stat-card humidity">
+                            <div class="stat-icon humidity">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Humidity</h3>
+                                <p id="humidity-value">
+                                    Loading... <span class="trend" id="humidity-trend"></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Sky Card -->
+                        <div class="stat-card sky">
+                            <div class="stat-icon sky">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Sky</h3>
+                                <p id="sky-value">Rain: <span id="rain-chance">--%</span> | Cloudiness: <span id="cloud-cover">--%</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Second Row -->
+                    <div class="stats-row">
+                        <!-- Wind Card -->
+                        <div class="stat-card wind">
+                            <div class="stat-icon wind">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Wind</h3>
+                                <p id="wind-value">
+                                    Loading...
+                                </p>
+                                <p>
+                                    <span class="trend" id="wind-trend"></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Air Quality Card -->
+                        <div class="stat-card air-quality">
+                            <div class="stat-icon air-quality">
+                                <i class="fas fa-lungs"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Air Quality</h3>
+                                <p id="air-quality-value">
+                                    Loading... <span class="trend" id="air-quality-trend"></span>
+                                </p>
+                                <p id="air-quality-details" class="small-details"></p>
+                            </div>
+                        </div>
+
+                        <!-- Light & Visibility Card -->
+                        <div class="stat-card light">
+                            <div class="stat-icon light">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Light & Visibility</h3>
+                                <p id="light-value">
+                                    Loading... 
+                                    <span class="trend" id="light-trend"></span>
+                                </p>
+                                <p id="visibility-value">Visibility: -- km</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Third Row -->
+                    <div class="stats-row">
+                        <!-- Sunrise Card -->
+                        <div class="stat-card sunrise">
+                            <div class="stat-icon sunrise">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Sunrise</h3>
+                                <p id="sunrise-value">
+                                    Loading... <span class="trend" id="sunrise-trend"></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Sunset Card -->
+                        <div class="stat-card sunset">
+                            <div class="stat-icon sunset">
+                                <i class="fas fa-adjust"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Sunset</h3>
+                                <p id="sunset-value">Loading... <span class="trend" id="sunset-trend"></span></p>
+                            </div>
+                        </div>
+
+                        <!-- Moon Phase Card -->
+                        <div class="stat-card moon">
+                            <div class="stat-icon moon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Moon Phase</h3>
+                                <p id="moon-phase">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Profile Section -->
+<div class="profile-section">
+  <aside>
+        <div class="card profile-box">
+          <div class="avatar-wrapper">
+            <div class="avatar" id="avatar" title="Click to edit profile"></div>
+            <div class="achievement-badge" id="profileBadge" style="display:none"></div>
+          </div>
+          <div class="profile-name" id="profileName">Jane Doe</div>
+          <div class="profile-email" id="profileEmail">jane@example.com</div>
+
+          <div class="profile-actions">
+            <button class="btn" onclick="openEditProfile()">Edit profile</button>
+            <button class="btn ghost" onclick="openBadgeSelector()">Display Badge</button>
+          </div>
+
+          <div style="margin-top:16px;width:100%">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+              <span class="small-muted">Level <span id="userLevel">—</span></span>
+              <span><strong id="userPoints">0</strong> Progress</span>
+            </div>
+            <div class="points-progress">
+              <div class="points-fill" id="pointsFill"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+     </div>
+    </div>
+    </div>
+
+        <!-- Analytics Page -->
+        <div id="analytics-page" class="page-content">
+            <div class="page-header">
+                <h1>Analytics</h1>
+                <div class="actions">
+                    <div class="export-container">
+    <button class="btn-export" id="exportDataBtn">
+        <i class="fas fa-file-export"></i> Export Data
+    </button>
+    <div class="export-dropdown">
+        <a href="#" data-type="csv"><i class="fas fa-file-csv"></i> CSV</a>
+        <a href="#" data-type="pdf"><i class="fas fa-file-pdf"></i> PDF</a>
+        <a href="#" data-type="docx"><i class="fas fa-file-word"></i> DOCX</a>
+        <a href="#" data-type="json"><i class="fas fa-file-code"></i> JSON</a>
+        <a href="#" data-type="png"><i class="fas fa-file-image"></i> PNG</a>
+        <a href="#" data-type="jpeg"><i class="fas fa-file-image"></i> JPEG</a>
+    </div>
+</div>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-card">
+                    <h3>Avg. Temperature</h3>
+                    <div class="value">24.2°C</div>
+                    <div class="change positive">+0.5°C <i class="fas fa-arrow-up"></i></div>
+                </div>
+                <div class="metric-card">
+                    <h3>Avg. Humidity</h3>
+                    <div class="value">67%</div>
+                    <div class="change negative">-2% <i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="metric-card">
+                    <h3>Light Hours</h3>
+                    <div class="value">14h</div>
+                    <div class="change positive">+1h <i class="fas fa-arrow-up"></i></div>
+                </div>
+                <div class="metric-card">
+                    <h3>Water Changes</h3>
+                    <div class="value">3</div>
+                    <div class="change positive">+1 <i class="fas fa-arrow-up"></i></div>
+                </div>
+            </div>
+
+            <!-- Global Timeframe Controls -->
+            <div class="global-timeframe chart-card">
+                <div class="chart-actions">
+                    <span>View All Charts: </span>
+                    <button class="timeframe-btn active" data-timeframe="day">Day</button>
+                    <button class="timeframe-btn" data-timeframe="week">Week</button>
+                    <button class="timeframe-btn" data-timeframe="month">Month</button>
+                </div>
+            </div>
+            
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <div class="chart-card" data-chart-id="temperature">
+                    <div class="chart-header">
+                        <h3>Temperature Trends</h3>
+                        <div class="chart-actions">
+                            <button class="timeframe-btn active" data-timeframe="day">Day</button>
+                            <button class="timeframe-btn" data-timeframe="week">Week</button>
+                            <button class="timeframe-btn" data-timeframe="month">Month</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card" data-chart-id="airQuality">
+                    <div class="chart-header">
+                        <h3>Air Quality Index</h3>
+                        <div class="chart-actions">
+                            <button class="timeframe-btn active" data-timeframe="day">Day</button>
+                            <button class="timeframe-btn" data-timeframe="week">Week</button>
+                            <button class="timeframe-btn" data-timeframe="month">Month</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="airQualityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Environmental Trends</h2>
+                <div class="chart-wrapper">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carbon Footprint Page -->
+        <div id="carbon-footprint-page" class="page-content">
+            <div class="page-header">
+                <h1>Carbon Footprint Tracker</h1>
+                <div class="actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card transport">
+                    <div class="stat-icon transport">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Transport</h3>
+                        <p id="transport-co2">0 kg</p>
+                        <span class="trend up"><i class="fas fa-arrow-up"></i> Daily</span>
+                    </div>
+                </div>
+                <div class="stat-card food">
+                    <div class="stat-icon food">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Food</h3>
+                        <p id="food-co2">0 kg</p>
+                        <span class="trend down"><i class="fas fa-arrow-down"></i> Weekly</span>
+                    </div>
+                </div>
+                <div class="stat-card energy">
+                    <div class="stat-icon energy">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Energy</h3>
+                        <p id="energy-co2">0 kWh</p>
+                        <span class="trend up"><i class="fas fa-chart-line"></i> Monthly</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Daily Carbon Log</h2>
+                <div class="log-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-tags"></i> Category</label>
+                            <select id="category-select" class="form-control">
+                                <option value="transport">🚗 Transport</option>
+                                <option value="food">🍔 Food</option>
+                                <option value="energy">⚡ Energy</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row" id="dynamic-inputs">
+                        <!-- Dynamic inputs will appear here -->
+                    </div>
+                    
+                    <button type="button" class="btn-log-entry" id="log-entry">
+                        <i class="fas fa-calculator"></i> Footprint Audit Tool
+                    </button>
+                </div>
+            </div>
+           <!-- Pop-up overlays (one per calculator) -->
+<div id="popup-transport" class="popup-overlay">
+    <div class="popup-content">
+        <span class="popup-close" onclick="closePopup('popup-transport')">&times;</span>
+        <iframe class="popup-iframe" src="/api/carbon/transport"></iframe>
+    </div>
+</div>
+
+<div id="popup-food" class="popup-overlay">
+    <div class="popup-content">
+        <span class="popup-close" onclick="closePopup('popup-food')">&times;</span>
+        <iframe class="popup-iframe" src="/api/carbon/food"></iframe>
+    </div>
+</div>
+
+<div id="popup-energy" class="popup-overlay">
+    <div class="popup-content">
+        <span class="popup-close" onclick="closePopup('popup-energy')">&times;</span>
+        <iframe class="popup-iframe" src="/api/carbon/energy"></iframe>
+    </div>
+</div>
+            <div class="card">
+                <h2>Real-time CO₂ Impact</h2>
+                <div class="impact-visualization">
+                    <div class="impact-bars">
+                        <div class="impact-bar-container">
+                            <div class="impact-label">Transport</div>
+                            <div class="impact-bar-wrapper">
+                                <div class="impact-bar transport-bar" id="transport-impact-bar" style="width: 0%;"></div>
+                            </div>
+                            <div class="impact-value" id="transport-impact-value">0.00 kg</div>
+                        </div>
+                        <div class="impact-bar-container">
+                            <div class="impact-label">Food</div>
+                            <div class="impact-bar-wrapper">
+                                <div class="impact-bar food-bar" id="food-impact-bar" style="width: 0%;"></div>
+                            </div>
+                            <div class="impact-value" id="food-impact-value">0.00 kg</div>
+                        </div>
+                        <div class="impact-bar-container">
+                            <div class="impact-label">Energy</div>
+                            <div class="impact-bar-wrapper">
+                                <div class="impact-bar energy-bar" id="energy-impact-bar" style="width: 0%;"></div>
+                            </div>
+                            <div class="impact-value" id="energy-impact-value">0.00 kWh</div>
+                        </div>
+                    </div>
+                    <div class="impact-total">
+                        <div class="impact-total-label">Total CO₂ Impact</div>
+                        <div class="impact-total-value" id="total-impact-value">0.00 kg</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vitamin D Estimator Page -->
+        <div id="vitamin-d-page" class="page-content">
+            <div class="page-header">
+                <h1>Vitamin D Estimator</h1>
+                <div class="actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vitamin-controls">
+                <!-- Location and Personalization Grid -->
+                <div class="location-personalization">
+                    <!-- Location Section -->
+                    <div class="card">
+                        <h2>Location Detection</h2>
+                        <div class="detection-options">
+                            <button id="auto-detect" class="detection-btn active">
+                                <i class="fas fa-location-arrow"></i> Auto Detect
+                            </button>
+                            <button id="manual-input" class="detection-btn">
+                                <i class="fas fa-map-marker-alt"></i> Manual Input
+                            </button>
+                        </div>
+
+                        <div class="location-inputs">
+                            <!-- Auto-detect will show this -->
+                            <div id="auto-section" class="input-section">
+                                <p>We'll use your device's location to get accurate UV data</p>
+                                <button id="get-location" class="btn-primary">
+                                    <i class="fas fa-crosshairs"></i> Detect My Location
+                                </button>
+                            </div>
+
+                            <!-- Manual input will show this -->
+                            <div id="manual-section" class="input-section" style="display:none">
+                                <div class="form-row">
+                                    <div class="form-group country-select">
+                                        <label><i class="fas fa-globe"></i> Country</label>
+                                        <select id="country-select" class="form-control">
+                                            <option value="">Select Country</option>
+                                            <!-- Options will be populated by JS -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group city-select">
+                                        <label><i class="fas fa-city"></i> City</label>
+                                        <select id="city-select" class="form-control" disabled>
+                                            <option value="">Select City</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personalization Section -->
+                    <div class="card">
+                        <h2>Personalization</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Skin Type</label>
+                                <select id="skin-type" class="form-control">
+                                    <option value="1">Type I (Very Fair)</option>
+                                    <option value="2">Type II (Fair)</option>
+                                    <option value="3">Type III (Medium)</option>
+                                    <option value="4">Type IV (Olive)</option>
+                                    <option value="5">Type V (Brown)</option>
+                                    <option value="6">Type VI (Dark)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-birthday-cake"></i> Age</label>
+                                <select id="age-group" class="form-control">
+                                    <option value="child">Child (0-12)</option>
+                                    <option value="teen">Teen (13-19)</option>
+                                    <option value="adult">Adult (20-60)</option>
+                                    <option value="senior">Senior (60+)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-clock"></i> Exposure (minutes)</label>
+                                <input type="number" id="exposure-time" class="form-control" min="1" max="240" value="15">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-venus-mars"></i> Gender</label>
+                                <select id="gender" class="form-control">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-weight"></i> Weight (kg)</label>
+                                <input type="number" id="weight" class="form-control" min="1" max="200" value="70">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tint"></i> Blood Serum Level (ng/mL) <small>(optional)</small></label>
+                            <input type="number" id="serum-level" class="form-control" placeholder="Leave empty if unknown">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-sun"></i> Current UV Index <small>(auto-detected or manual)</small></label>
+                            <div class="uv-input-group">
+                                <input type="number" id="uv-index-input" class="form-control" min="0" max="12" step="0.1" value="5.0">
+                                <button id="auto-detect-uv" title="Auto-detect UV Index">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <style>
+                            .uv-input-group {
+                                display: flex;
+                                gap: 8px;
+                            }
+                            
+                            .uv-input-group .form-control {
+                                flex: 1;
+                            }
+                            
+                            .uv-input-group button {
+                                background: var(--primary-color, #4CAF50);
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                padding: 0 12px;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            }
+                            
+                            .uv-input-group button:hover {
+                                background: var(--primary-hover, #3e8e41);
+                            }
+                        </style>
+                        <button id="calculate-btn" class="btn-primary" style="width: 100%; margin-top: 15px; background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;">
+                            <i class="fas fa-calculator"></i> Calculate Vitamin D
+                        </button>
+                        <style>
+                            #calculate-btn:hover {
+                                transform: translateY(-2px);
+                                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+                            }
+                            #calculate-btn:active {
+                                transform: translateY(1px);
+                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                            }
+                        </style>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="card results-card">
+                    <h2>Your Vitamin D Analysis</h2>
+                    <div class="vitamin-stats">
+                        <div class="stat-card uv-index">
+                            <div class="stat-icon uv-index" style="background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Current UV Index</h3>
+                                <p id="current-uv">--</p>
+                            </div>
+                        </div>
+                        <div class="stat-card exposure">
+                            <div class="stat-icon exposure" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Recommended Exposure</h3>
+                                <p id="recommended-time">-- min</p>
+                            </div>
+                        </div>
+                        <div class="stat-card level">
+                            <div class="stat-icon level" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Your Level</h3>
+                                <p id="vitamin-level">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-container" style="height: 30px; margin: 10px 0;">
+                        <div class="progress-bar" id="progressBar" style="height: 100%; line-height: 30px; font-weight: bold; text-align: center;">--</div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="vitaminChart"></canvas>
+                    </div>
+
+                    <!-- Results and AI Suggestions in separate cards side by side -->
+                    <div class="vitamin-results-container" style="display: flex; gap: 20px; margin-top: 20px;">
+                        <!-- Results Card -->
+                        <div class="card glass-card" style="flex: 1; padding: 20px; border-radius: 15px; box-shadow: var(--shadow-md);">
+                            <h3 style="margin-top: 0; color: var(--text); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                                <i class="fas fa-chart-bar" style="margin-right: 8px; color: var(--primary);"></i> Vitamin D Estimator Results
+                            </h3>
+                            <p id="vitamin-amount" style="font-size: 16px; margin: 15px 0; color: var(--text);">Estimated Vitamin D: -- IU</p>
+                            <p id="vitamin-advice" style="font-size: 16px; margin: 15px 0; color: var(--text-light);">Advice: --</p>
+                        </div>
+                        
+                        <!-- Professional AI Suggestion Box -->
+                        <div class="card glass-card" style="flex: 1; padding: 20px; border-radius: 15px; box-shadow: var(--shadow-md);">
+                            <h3 style="margin-top: 0; color: var(--text); font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                                <i class="fas fa-robot" style="margin-right: 8px; color: var(--primary);"></i> Professional AI Suggestions
+                            </h3>
+                            <div id="ai-suggestion-content" style="font-size: 16px; color: var(--text-light);">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       <!-- Updated Progress & Badges Page (Final Version) -->
+<div id="progress-page" class="page-content">
+    <div class="page-header">
+        <h1>Progress & Badges</h1>
+        <div class="actions">
+            <div class="share-container">
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share Progress
+                </button>
+                <div class="share-dropdown">
+                    <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
+                    <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                    <a href="#"><i class="fas fa-envelope"></i> Email</a>
+                </div>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="notifications" id="notificationsBtn">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+        </div>
+    </div>
+
+    <main class="progress-page">
+        <div class="section card">
+          <h2>Your Achievement</h2>
+          <p class="small-muted" style="margin-top:6px">Collect up to 12 badges. Unlocking a badge will allow you to display it on your profile.</p>
+          <div style="height:12px"></div>
+          <div class="badges-container" id="badgesContainer"></div>
+        </div>
+
+        <div class="section card">
+          <h2>Your Progress</h2>
+          <div class="progress-grid" style="margin-top:10px">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div><strong>Current Rank</strong></div>
+                <div class="small-muted" id="rankPercentText">0%</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="rankFill"></div></div>
+              <div style="margin-top:8px" id="rankDetails" class="small-muted">Level —</div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div><strong>Eco Habits</strong></div>
+                <div><a href="#" onclick="openHabits()" class="small-muted">Manage</a></div>
+              </div>
+              <div class="habit-list" id="habitList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section card">
+          <h2>Progress Log (Recent)</h2>
+          <div id="activityLog" class="small-muted" style="margin-top:8px;max-height:160px;overflow:auto"></div>
+        </div>
+      </main>
+    </div>
+
+  <div id="modalRoot"></div>
+  <div id="toastRoot"></div>
+
+
+        <!-- Articles & Notes Page -->
+        <div id="articles-page" class="page-content">
+            <div class="page-header">
+                <h1>Articles</h1>
+                <div class="actions">
+                    <button class="btn-new-note" id="newNoteBtn">
+                        <i class="fas fa-plus"></i> New Article
+                    </button>
+                    
+                    <script>
+                    // New Article button click event
+                    document.getElementById('newNoteBtn').addEventListener('click', function() {
+                        document.getElementById('noteModal').style.display = 'block';
+                        // Reset form when opening modal
+                        document.getElementById('articleForm').reset();
+                        document.getElementById('uploadPreview').style.display = 'none';
+                    });
+                    
+                    // Close modal when clicking the X
+                    document.querySelector('.note-modal-close').addEventListener('click', function() {
+                        document.getElementById('noteModal').style.display = 'none';
+                    });
+                    
+                    // Close modal when clicking outside of it
+                    window.addEventListener('click', function(event) {
+                        if (event.target == document.getElementById('noteModal')) {
+                            document.getElementById('noteModal').style.display = 'none';
+                        }
+                    });
+                    </script>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Featured Articles</h2>
+                <div class="articles-grid" id="articles-container">
+                    <!-- Articles will be loaded dynamically here -->
+                </div>
+                
+                <script>
+                // Function to load articles
+                function loadArticles() {
+                    fetch('/api/articles/')
+                        .then(response => response.json())
+                        .then(articles => {
+                            const articlesContainer = document.getElementById('articles-container');
+                            articlesContainer.innerHTML = '';
+                            
+                            if (articles.length === 0) {
+                                articlesContainer.innerHTML = '<p class="no-articles">No articles yet. Be the first to create one!</p>';
+                                return;
+                            }
+                            
+                            articles.forEach(article => {
+                                // Format date
+                                const date = new Date(article.created_at);
+                                const formattedDate = date.toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                });
+                                
+                                // Create article card
+                                const articleCard = document.createElement('div');
+                                articleCard.className = 'article-card';
+                                articleCard.setAttribute('data-article-id', article.id);
+                                
+                                // Set default image if none provided
+                                const imageUrl = article.image_path 
+                                    ? article.image_path 
+                                    : 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60';
+                                
+                                articleCard.innerHTML = `
+                                    <div class="article-image" style="background-image: url('${imageUrl}');">
+                                        <div class="article-menu-btn" data-article-id="${article.id}">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </div>
+                                        <div class="article-menu-dropdown" id="dropdown-${article.id}">
+                                            <div class="article-menu-item edit-article" data-article-id="${article.id}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </div>
+                                            <div class="article-menu-item delete-article" data-article-id="${article.id}">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="article-content">
+                                        <h3 class="article-title">${article.title}</h3>
+                                        <p class="article-excerpt">${article.content.substring(0, 150)}${article.content.length > 150 ? '...' : ''}</p>
+                                        <div class="article-meta">
+                                            <span><i class="far fa-user"></i> ${article.author || 'Anonymous'}</span>
+                                            <span><i class="far fa-calendar-alt"></i> ${formattedDate}</span>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                // Add click event to view full article - but not when clicking the menu button
+                                articleCard.addEventListener('click', (e) => {
+                                    // Don't trigger article view if clicking on menu button or dropdown
+                                    if (!e.target.closest('.article-menu-btn') && !e.target.closest('.article-menu-dropdown')) {
+                                        viewArticle(article.id);
+                                    }
+                                });
+                                
+                                // Add event listeners for menu button and dropdown items after the card is added to DOM
+                                setTimeout(() => {
+                                    // Get the menu button for this card
+                                    const menuBtn = articleCard.querySelector('.article-menu-btn');
+                                    const dropdown = articleCard.querySelector('.article-menu-dropdown');
+                                    const editBtn = articleCard.querySelector('.edit-article');
+                                    const deleteBtn = articleCard.querySelector('.delete-article');
+                                    
+                                    // Toggle dropdown when clicking menu button
+                                    if (menuBtn) {
+                                        menuBtn.addEventListener('click', (e) => {
+                                            e.stopPropagation();
+                                            dropdown.classList.toggle('show');
+                                        });
+                                    }
+                                    
+                                    // Edit article
+                                    if (editBtn) {
+                                        editBtn.addEventListener('click', (e) => {
+                                            e.stopPropagation();
+                                            editArticle(article.id);
+                                            dropdown.classList.remove('show');
+                                        });
+                                    }
+                                    
+                                    // Delete article
+                                    if (deleteBtn) {
+                                        deleteBtn.addEventListener('click', (e) => {
+                                            e.stopPropagation();
+                                            confirmDeleteArticle(article.id);
+                                            dropdown.classList.remove('show');
+                                        });
+                                    }
+                                    
+                                    // Close dropdown when clicking outside
+                                    document.addEventListener('click', (e) => {
+                                        if (!e.target.closest('.article-menu-btn') && !e.target.closest('.article-menu-dropdown')) {
+                                            dropdown.classList.remove('show');
+                                        }
+                                    });
+                                }, 0);
+                                
+                                articlesContainer.appendChild(articleCard);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error loading articles:', error);
+                        });
+                }
+                
+                // Function to view a single article
+                function viewArticle(articleId) {
+                    // Fetch article details
+                    fetch(`/api/articles/${articleId}`)
+                        .then(response => response.json())
+                        .then(article => {
+                            // Populate article detail view with article data
+                            document.getElementById('articleViewTitle').textContent = article.title;
+                            document.getElementById('articleViewAuthor').innerHTML = `<i class="far fa-user"></i> ${article.author || 'Anonymous'}`;
+                            
+                            // Format date
+                            const date = new Date(article.created_at);
+                            const formattedDate = date.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                            document.getElementById('articleViewDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
+                            
+                            // Set content
+                            document.getElementById('articleViewContent').innerHTML = article.content.replace(/\n/g, '<br>');
+                            
+                            // Set image if available
+                            const imageUrl = article.image_path 
+                                ? article.image_path 
+                                : 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60';
+                            document.getElementById('articleViewImage').style.backgroundImage = `url('${imageUrl}')`;
+                            
+                            // Load comments
+                            loadComments(articleId);
+                            
+                            // Store article ID for comment submission
+                            document.getElementById('submitComment').setAttribute('data-article-id', articleId);
+                            
+                            // Hide all pages and show the article view page
+                            hideAllPages();
+                            document.getElementById('article-view-page').style.display = 'block';
+                            
+                            // Keep sidebar visible - no need to hide it
+                            // Scroll to top
+                            window.scrollTo(0, 0);
+                        })
+                        .catch(error => {
+                            console.error('Error loading article:', error);
+                        });
+                }
+                
+                // Function to hide all pages
+        function hideAllPages() {
+            const pageContents = document.querySelectorAll('.page-content');
+            pageContents.forEach(page => {
+                // Skip the article-view-page as it's handled separately
+                if (page.id !== 'article-view-page') {
+                    page.style.display = 'none';
+                }
+            });
+            // Always ensure article view page is hidden when switching pages
+            const articleViewPage = document.getElementById('article-view-page');
+            if (articleViewPage) {
+                articleViewPage.style.display = 'none';
+            }
+        }
+                
+                // Function to set active page in menu
+                function setActivePage(pageId) {
+                    const menuLinks = document.querySelectorAll('.menu li a');
+                    menuLinks.forEach(link => {
+                        if (link.getAttribute('data-page') === pageId) {
+                            link.parentElement.classList.add('active');
+                        } else {
+                            link.parentElement.classList.remove('active');
+                        }
+                    });
+                }
+                
+                // Function to close article view and return to articles list
+                function closeArticleView() {
+                    // Hide all pages first
+                    hideAllPages();
+                    
+                    // Show articles page
+                    document.getElementById('articles-page').style.display = 'block';
+                    
+                    // Make sure articles page is active in the menu
+                    setActivePage('articles-page');
+                    
+                    // Force navigation to articles page by simulating a click on the menu item
+                    const articlesLink = document.querySelector('a[data-page="articles-page"]');
+                    if (articlesLink) {
+                        articlesLink.click();
+                    }
+                    
+                    // Scroll to top of articles page
+                    window.scrollTo(0, 0);
+                }
+                
+                // Function to edit an article
+                function editArticle(articleId) {
+                    // Fetch article data
+                    fetch(`/api/articles/${articleId}`)
+                    .then(response => response.json())
+                    .then(article => {
+                        // Populate form fields
+                        document.getElementById('editArticleId').value = article.id;
+                        document.getElementById('editArticleTitle').value = article.title;
+                        document.getElementById('editArticleContent').value = article.content;
+                        
+                        // Reset file inputs
+                        document.getElementById('editImageUpload').value = '';
+                        document.getElementById('editTextFileUpload').value = '';
+                        document.getElementById('editUploadPreview').style.display = 'none';
+                        
+                        // Show current image if exists
+                        if (article.image_path) {
+                            document.getElementById('currentImagePreview').style.display = 'block';
+                            document.querySelector('.current-image-container').style.backgroundImage = `url('${article.image_path}')`;
+                        } else {
+                            document.getElementById('currentImagePreview').style.display = 'none';
+                        }
+                        
+                        // Remove any existing remove_image flag
+                        const existingFlag = document.getElementById('removeImageFlag');
+                        if (existingFlag) {
+                            existingFlag.parentNode.removeChild(existingFlag);
+                        }
+                        
+                        // Show modal
+                        document.getElementById('editArticleModal').style.display = 'flex';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching article:', error);
+                        alert('Error fetching article details. Please try again.');
+                    });
+                }
+                
+                // Function to confirm article deletion
+                function confirmDeleteArticle(articleId) {
+                    // Set article ID in the delete confirmation modal
+                    document.getElementById('deleteArticleId').value = articleId;
+                    
+                    // Show delete confirmation modal
+                    document.getElementById('deleteConfirmModal').style.display = 'flex';
+                }
+                
+                // Function to delete an article
+                function deleteArticle(articleId) {
+                    fetch(`/api/articles/${articleId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Close modal
+                        document.getElementById('deleteConfirmModal').style.display = 'none';
+                        
+                        // Refresh articles
+                        loadArticles();
+                        
+                        // Show success message
+                        alert('Article deleted successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error deleting article:', error);
+                        alert('Error deleting article. Please try again.');
+                    });
+                }
+                
+                // Function to load comments for an article
+                function loadComments(articleId) {
+                    fetch(`/api/comments/article/${articleId}`)
+                        .then(response => response.json())
+                        .then(comments => {
+                            const commentsContainer = document.getElementById('commentsContainer');
+                            commentsContainer.innerHTML = '';
+                            
+                            // Update comments count
+                            const commentsCount = document.getElementById('commentsCount');
+                            if (commentsCount) {
+                                commentsCount.textContent = comments.length;
+                            }
+                            
+                            if (comments.length === 0) {
+                                commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+                                return;
+                            }
+                            
+                            comments.forEach(comment => {
+                                // Format date
+                                const date = new Date(comment.created_at);
+                                const formattedDate = date.toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                });
+                                
+                                // Create comment element
+                                const commentElement = document.createElement('div');
+                                commentElement.className = 'comment';
+                                commentElement.setAttribute('data-comment-id', comment.id);
+                                
+                                let commentHTML = `
+                                    <div class="comment-header">
+                                        <span class="comment-author">${comment.author || 'Anonymous'}</span>
+                                        <span class="comment-date">${formattedDate}</span>
+                                    </div>
+                                    <div class="comment-content">${comment.content}</div>
+                                    <div class="comment-actions">
+                                        <span class="comment-action reply-btn" onclick="showReplyForm(${comment.id})"><i class="far fa-comment"></i> Reply</span>
+                                    </div>
+                                    <div class="reply-form" id="replyForm-${comment.id}">
+                                        <textarea id="replyInput-${comment.id}" placeholder="Write a reply (max 100 words)" maxlength="500"></textarea>
+                                        <div class="reply-form-actions">
+                                            <button class="btn-cancel-reply" onclick="hideReplyForm(${comment.id})">Cancel</button>
+                                            <button class="btn-submit-reply" onclick="submitReply(${comment.id})"><i class="far fa-paper-plane"></i> Reply</button>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                // Add replies if any
+                                if (comment.replies && comment.replies.length > 0) {
+                                    commentHTML += '<div class="replies-container">';
+                                    
+                                    comment.replies.forEach(reply => {
+                                        // Format reply date
+                                        const replyDate = new Date(reply.created_at);
+                                        const formattedReplyDate = replyDate.toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        });
+                                        
+                                        commentHTML += `
+                                            <div class="reply" data-reply-id="${reply.id}">
+                                                <div class="comment-header">
+                                                    <span class="comment-author">${reply.author || 'Anonymous'}</span>
+                                                    <span class="comment-date">${formattedReplyDate}</span>
+                                                </div>
+                                                <div class="comment-content">${reply.content}</div>
+                                            </div>
+                                        `;
+                                    });
+                                    
+                                    commentHTML += '</div>';
+                                }
+                                
+                                commentElement.innerHTML = commentHTML;
+                                commentsContainer.appendChild(commentElement);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error loading comments:', error);
+                        });
+                }
+                
+                // Load articles when the page loads
+                document.addEventListener('DOMContentLoaded', function() {
+                    loadArticles();
+                });
+                </script>
+            </div>
+        </div>
+
+        <!-- Article View Page -->
+        <div id="article-view-page" class="article-view-page page-content">
+            <!-- Navbar -->
+            <div class="navbar" style="padding: 0 20px; margin: 0;">
+                <div class="nav-title">
+                    <h1>Article View</h1>
+                </div>
+                <div class="nav-actions">
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="article-view-content">
+                <div class="back-button-container">
+                    <button class="back-button" onclick="closeArticleView()"><i class="fas fa-arrow-left"></i> Back to Articles</button>
+                </div>
+                <div>
+                    .
+                </div>
+                <div> 
+                </div>
+                <div style="padding: 0 20px;">
+                    <div class="article-view-image" id="articleViewImage"></div>
+                    <div class="article-view-body">
+                        <h1 id="articleViewTitle">Article Title</h1>
+                        <div class="article-view-meta">
+                            <span id="articleViewAuthor"><i class="far fa-user"></i> Author Name</span>
+                            <span id="articleViewDate"><i class="far fa-calendar-alt"></i> January 1, 2023</span>
+                        </div>
+                        <div class="article-view-text" id="articleViewContent">
+                            Article content will be displayed here.
+                        </div>
+                    </div>
+                </div>
+                    
+                    <!-- Comments Section -->
+                    <div class="comments-section">
+                        <h3>
+                            <i class="far fa-comments"></i> Comments 
+                            <span class="comments-count">(<span id="commentsCount">0</span>)</span>
+                        </h3>
+                        <div class="comment-form">
+                            <textarea id="commentInput" placeholder="Write a comment (max 100 words)" maxlength="500"></textarea>
+                            <button class="btn-comment" id="submitComment"><i class="far fa-paper-plane"></i> Post Comment</button>
+                        </div>
+                        <div class="comments-count" id="commentsCount">0 comments</div>
+                        <div class="comments-container" id="commentsContainer">
+                            <!-- Comments will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page-content">
+            <div class="page-header">
+                <h1>Settings</h1>
+                <div class="actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>System Settings</h2>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Automatic Updates</h3>
+                        <p>Keep system up to date</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Data Backup</h3>
+                        <p>Daily backup to cloud</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Maintenance Mode</h3>
+                        <p>Temporarily disable system</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox">
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>Notification Settings</h2>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Email Alerts</h3>
+                        <p>Receive email notifications</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Push Notifications</h3>
+                        <p>Mobile app alerts</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>SMS Alerts</h3>
+                        <p>Critical alerts via SMS</p>
+                    </div>
+                    <label class="settings-toggle">
+                        <input type="checkbox">
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+    <!-- Article Detail View -->
+    <div id="articleViewModal" class="article-detail-view">
+        <div class="article-detail-container">
+            <div class="article-detail-header">
+                <h1 id="articleViewTitle">Tracking Carbon Footprints Through Daily Choices</h1>
+                <div class="article-meta">
+                    <span id="articleViewAuthor"><i class="far fa-user"></i> John Hope</span>
+                    <span id="articleViewDate"><i class="far fa-calendar-alt"></i> September 11, 2023</span>
+                </div>
+            </div>
+            
+            <div class="article-detail-image" id="articleViewImage"></div>
+            
+            <div class="article-detail-content">
+                <div id="articleViewContent" class="content-text">
+                    <p>When it comes to understanding our environmental impact, daily activities can be broken down into three main categories: transportation, energy usage, and food habits. Each of these contributes differently to an individual's overall carbon footprint. While cars, electricity, and appliances often get the spotlight, our dietary decisions play an equally powerful role.</p>
+                    
+                    <h2>Food and Carbon Emissions</h2>
+                    <p>What we eat, how it's produced, and even how far it travels significantly shape our personal emission profile. Diets high in red meat and dairy tend to carry larger carbon footprints due to the resource-intensive nature of livestock farming. On the other hand, plant-based foods—such as grains, vegetables, and legumes—generally require fewer resources and emit less carbon.</p>
+                    
+                    <p>Additionally, food waste is a critical factor. Throwing away unused meals doesn't just waste calories, it also wastes all fuel used to produce and transport that food. Simple changes like planning meals, properly storing leftovers, or reducing meat intake can create a meaningful reduction in personal emissions.</p>
+                    
+                    <p>By being conscious of food habits, individuals can take a practical step toward lowering their environmental footprint—without waiting for systemic change.</p>
+                </div>
+                
+                <div class="back-button-container">
+                    <button class="back-button" onclick="closeArticleView()">
+                        <i class="fas fa-arrow-left"></i> Back to Articles
+                    </button>
+                </div>
+                
+                <div class="comments-section">
+                    <h3>Comments</h3>
+                    <div class="comment-form">
+                        <textarea id="commentInput" placeholder="Write a comment (max 100 words)" maxlength="500"></textarea>
+                        <button class="btn-comment" id="submitComment">Post Comment</button>
+                    </div>
+                    <div id="commentsContainer" class="comments-container">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EcoBot AI Assistant -->
+    <div class="ai-assistant">
+        <!-- Floating Button -->
+        <button class="ai-btn glass-card" id="aiAssistantBtn">
+            <i class="fas fa-leaf"></i>
+            <span class="pulse-dot"></span>
+        </button>
+
+        <!-- Chat Container -->
+        <div class="ai-container glass-card" id="aiAssistantContainer">
+            <!-- Header -->
+            <div class="ai-header">
+                <div class="ai-header-bg"></div>
+                <div class="ai-title">
+                    <div class="ai-avatar">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div>
+                        <h3>EcoBot Assistant</h3>
+                        <div class="ai-status">
+                            <span class="status-dot"></span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-controls">
+                    <button class="ai-control-btn" id="newChatBtn" title="New Chat">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="ai-control-btn" id="historyBtn" title="Chat History">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button class="ai-close" id="aiAssistantClose" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat History Sidebar -->
+            <div class="ai-history-panel" id="historyPanel">
+                <div class="history-header">
+                    <h4><i class="fas fa-history"></i> Chat History</h4>
+                    <button class="close-history" id="closeHistoryBtn" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- History items will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Message Container -->
+            <div class="ai-messages" id="aiMessages">
+                <!-- Messages will appear here -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="ai-input">
+                <div class="quick-actions">
+                    <button class="quick-btn eco-tip" data-action="footprint">
+                        <i class="fas fa-shoe-prints"></i> Footprint Tips
+                    </button>
+                    <button class="quick-btn eco-tip" data-action="vitaminD">
+                        <i class="fas fa-sun"></i> Sunlight Advice
+                    </button>
+                    <button class="quick-btn eco-tip" data-action="recycling">
+                        <i class="fas fa-recycle"></i> Recycling Guide
+                    </button>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="aiInput" placeholder="Ask about sustainability..." autocomplete="off">
+                    <button id="aiSend" title="Send"><i class="fas fa-paper-plane"></i></button>
+                    <button id="aiVoice" class="voice-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
+                </div>
+                <div class="disclaimer">
+                    <i class="fas fa-info-circle"></i> EcoBot may produce inaccurate information about sustainability.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Creation Modal -->
+    <div id="noteModal" class="note-modal">
+        <div class="note-modal-content">
+            <div class="note-modal-header">
+                <h2>Create New Article</h2>
+                <span class="note-modal-close">&times;</span>
+            </div>
+            <form class="note-form" id="articleForm" enctype="multipart/form-data">
+                <input type="hidden" id="articleId" name="article_id" value="">
+                <input type="text" id="articleTitle" name="title" placeholder="Article Title" required>
+                <textarea id="articleContent" name="content" placeholder="Write your article here..." required></textarea>
+                
+                <div class="attachment-options">
+                    <div class="attachment-btn" title="Add Image" id="imageUploadBtn">
+                        <i class="fas fa-image"></i>
+                        <input type="file" id="imageUpload" name="image" accept=".png,.jpg,.jpeg" style="display:none;">
+                    </div>
+                    <div class="attachment-btn" title="Add Text File" id="textFileUploadBtn">
+                        <i class="fas fa-paperclip"></i>
+                        <input type="file" id="textFileUpload" name="text_file" accept=".txt" style="display:none;">
+                    </div>
+                    <div class="attachment-btn" title="Add Location">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                </div>
+                
+                <div id="uploadPreview" style="display:none; margin-top: 10px;">
+                    <p id="uploadFileName"></p>
+                    <button type="button" id="removeUpload" class="btn-small">Remove</button>
+                </div>
+                
+                <button type="submit" id="submitArticleBtn">Submit</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Article Edit Modal -->
+    <div id="editArticleModal" class="note-modal">
+        <div class="note-modal-content">
+            <div class="note-modal-header">
+                <h2>Edit Article</h2>
+                <span class="note-modal-close edit-modal-close">&times;</span>
+            </div>
+            <form class="note-form" id="editArticleForm" enctype="multipart/form-data">
+                <input type="hidden" id="editArticleId" name="article_id" value="">
+                <input type="text" id="editArticleTitle" name="title" placeholder="Article Title" required>
+                <textarea id="editArticleContent" name="content" placeholder="Write your article here..." required></textarea>
+                
+                <div class="attachment-options">
+                    <div class="attachment-btn" title="Add Image" id="editImageUploadBtn">
+                        <i class="fas fa-image"></i>
+                        <input type="file" id="editImageUpload" name="image" accept=".png,.jpg,.jpeg" style="display:none;">
+                    </div>
+                    <div class="attachment-btn" title="Add Text File" id="editTextFileUploadBtn">
+                        <i class="fas fa-paperclip"></i>
+                        <input type="file" id="editTextFileUpload" name="text_file" accept=".txt" style="display:none;">
+                    </div>
+                </div>
+                
+                <div id="editUploadPreview" style="display:none; margin-top: 10px;">
+                    <p id="editUploadFileName"></p>
+                    <button type="button" id="editRemoveUpload" class="btn-small">Remove</button>
+                </div>
+                
+                <div id="currentImagePreview" style="display:none; margin-top: 10px;">
+                    <p>Current Image:</p>
+                    <div class="current-image-container" style="width: 100px; height: 100px; background-size: cover; background-position: center; margin: 10px 0;"></div>
+                    <button type="button" id="removeCurrentImage" class="btn-small">Remove Current Image</button>
+                </div>
+                
+                <button type="submit" id="updateArticleBtn">Update Article</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="note-modal">
+        <div class="note-modal-content" style="max-width: 400px;">
+            <div class="note-modal-header">
+                <h2>Confirm Deletion</h2>
+                <span class="note-modal-close delete-modal-close">&times;</span>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <p>Are you sure you want to delete this article?</p>
+                <input type="hidden" id="deleteArticleId" value="">
+                <div style="margin-top: 20px;">
+                    <button id="confirmDeleteBtn" class="btn-danger" style="margin-right: 10px; background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Yes, Delete</button>
+                    <button id="cancelDeleteBtn" style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up event listeners for edit modal
+        document.querySelector('.edit-modal-close').addEventListener('click', function() {
+            document.getElementById('editArticleModal').style.display = 'none';
+        });
+        
+        // Set up event listeners for delete confirmation modal
+        document.querySelector('.delete-modal-close').addEventListener('click', function() {
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        });
+        
+        document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        });
+        
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            const articleId = document.getElementById('deleteArticleId').value;
+            deleteArticle(articleId);
+        });
+        
+        // Set up event listeners for edit article form
+        document.getElementById('editImageUploadBtn').addEventListener('click', function() {
+            document.getElementById('editImageUpload').click();
+        });
+        
+        document.getElementById('editImageUpload').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                document.getElementById('editUploadFileName').textContent = 'Selected image: ' + this.files[0].name;
+                document.getElementById('editUploadPreview').style.display = 'block';
+                document.getElementById('currentImagePreview').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('editTextFileUploadBtn').addEventListener('click', function() {
+            document.getElementById('editTextFileUpload').click();
+        });
+        
+        document.getElementById('editTextFileUpload').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                document.getElementById('editUploadFileName').textContent = 'Selected file: ' + this.files[0].name;
+                document.getElementById('editUploadPreview').style.display = 'block';
+                
+                // Read text file content
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editArticleContent').value = e.target.result;
+                };
+                reader.readAsText(this.files[0]);
+            }
+        });
+        
+        document.getElementById('editRemoveUpload').addEventListener('click', function() {
+            document.getElementById('editImageUpload').value = '';
+            document.getElementById('editTextFileUpload').value = '';
+            document.getElementById('editUploadPreview').style.display = 'none';
+        });
+        
+        document.getElementById('removeCurrentImage').addEventListener('click', function() {
+            document.getElementById('currentImagePreview').style.display = 'none';
+            
+            // Add a flag to indicate image removal
+            const removeImageFlag = document.createElement('input');
+            removeImageFlag.type = 'hidden';
+            removeImageFlag.name = 'remove_image';
+            removeImageFlag.value = 'true';
+            removeImageFlag.id = 'removeImageFlag';
+            
+            // Remove existing flag if it exists
+            const existingFlag = document.getElementById('removeImageFlag');
+            if (existingFlag) {
+                existingFlag.parentNode.removeChild(existingFlag);
+            }
+            
+            document.getElementById('editArticleForm').appendChild(removeImageFlag);
+        });
+        
+        // Edit Article form submission
+        document.getElementById('editArticleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const articleId = document.getElementById('editArticleId').value;
+            
+            fetch(`/api/articles/${articleId}`, {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Close modal
+                document.getElementById('editArticleModal').style.display = 'none';
+                
+                // Reset form
+                this.reset();
+                document.getElementById('editUploadPreview').style.display = 'none';
+                document.getElementById('currentImagePreview').style.display = 'none';
+                
+                // Reload articles
+                loadArticles();
+                
+                // Show success message
+                alert('Article updated successfully!');
+            })
+            .catch(error => {
+                console.error('Error updating article:', error);
+                alert('Error updating article. Please try again.');
+            });
+        });
+        // Article form submission
+        const articleForm = document.getElementById('articleForm');
+        const imageUploadBtn = document.getElementById('imageUploadBtn');
+        const imageUpload = document.getElementById('imageUpload');
+        const textFileUploadBtn = document.getElementById('textFileUploadBtn');
+        const textFileUpload = document.getElementById('textFileUpload');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const uploadFileName = document.getElementById('uploadFileName');
+        const removeUpload = document.getElementById('removeUpload');
+        const articleContent = document.getElementById('articleContent');
+        const submitCommentBtn = document.getElementById('submitComment');
+        const commentInput = document.getElementById('commentInput');
+        
+        // Image upload button click
+        imageUploadBtn.addEventListener('click', function() {
+            imageUpload.click();
+        });
+        
+        // Text file upload button click
+        textFileUploadBtn.addEventListener('click', function() {
+            textFileUpload.click();
+        });
+        
+        // Handle image file selection
+        imageUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                uploadFileName.textContent = 'Selected image: ' + this.files[0].name;
+                uploadPreview.style.display = 'block';
+            }
+        });
+        
+        // Handle text file selection
+        textFileUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                uploadFileName.textContent = 'Selected file: ' + this.files[0].name;
+                uploadPreview.style.display = 'block';
+                
+                // Read text file content
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    articleContent.value = e.target.result;
+                };
+                reader.readAsText(this.files[0]);
+            }
+        });
+        
+        // Remove uploaded file
+        removeUpload.addEventListener('click', function() {
+            imageUpload.value = '';
+            textFileUpload.value = '';
+            uploadPreview.style.display = 'none';
+        });
+        
+        // Form submission
+        articleForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/api/articles/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Close modal
+                document.getElementById('noteModal').style.display = 'none';
+                
+                // Reset form
+                articleForm.reset();
+                uploadPreview.style.display = 'none';
+                
+                // Reload articles
+                loadArticles();
+            })
+            .catch(error => {
+                console.error('Error creating article:', error);
+                alert('Error creating article. Please try again.');
+            });
+        });
+        
+        // Close article view modal
+        window.closeArticleView = function() {
+            // Hide all pages first
+            hideAllPages();
+            
+            // Show articles page
+            document.getElementById('articles-page').style.display = 'block';
+            
+            // Make sure articles page is active in the menu
+            setActivePage('articles-page');
+            
+            // Hide the article view modal if it exists
+            const articleViewModal = document.getElementById('articleViewModal');
+            if (articleViewModal) {
+                articleViewModal.style.display = 'none';
+            }
+        };
+        
+        // Submit comment
+        if (submitCommentBtn) {
+            submitCommentBtn.addEventListener('click', function() {
+                const articleId = this.getAttribute('data-article-id');
+                const content = commentInput.value.trim();
+                
+                if (!content) {
+                    alert('Please enter a comment');
+                    return;
+                }
+                
+                if (content.split(' ').length > 100) {
+                    alert('Comment cannot exceed 100 words');
+                    return;
+                }
+                
+                fetch('/api/comments/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        article_id: articleId,
+                        content: content
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Clear input
+                    commentInput.value = '';
+                    
+                    // Reload comments
+                    loadComments(articleId);
+                })
+                .catch(error => {
+                    console.error('Error posting comment:', error);
+                    alert('Error posting comment. Please try again.');
+                });
+            });
+        }
+        
+        // Show reply form
+        window.showReplyForm = function(commentId) {
+            const replyForm = document.getElementById(`replyForm-${commentId}`);
+            if (replyForm) {
+                replyForm.style.display = 'block';
+            }
+        };
+        
+        // Hide reply form
+        window.hideReplyForm = function(commentId) {
+            const replyForm = document.getElementById(`replyForm-${commentId}`);
+            if (replyForm) {
+                replyForm.style.display = 'none';
+            }
+        };
+        
+        // Submit reply
+        window.submitReply = function(commentId) {
+            const replyInput = document.getElementById(`replyInput-${commentId}`);
+            const content = replyInput.value.trim();
+            
+            if (!content) {
+                alert('Please enter a reply');
+                return;
+            }
+            
+            if (content.split(' ').length > 100) {
+                alert('Reply cannot exceed 100 words');
+                return;
+            }
+            
+            fetch('/api/comments/reply/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    comment_id: commentId,
+                    content: content
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Clear input and hide form
+                replyInput.value = '';
+                document.getElementById(`replyForm-${commentId}`).style.display = 'none';
+                
+                // Reload comments for the current article
+                const articleId = document.getElementById('submitComment').getAttribute('data-article-id');
+                loadComments(articleId);
+            })
+            .catch(error => {
+                console.error('Error posting reply:', error);
+                alert('Error posting reply. Please try again.');
+            });
+        };
+        
+        // Delete comment (for comment owner)
+        window.deleteComment = function(commentId) {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                fetch(`/api/comments/${commentId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Reload comments for the current article
+                    const articleId = document.getElementById('submitComment').getAttribute('data-article-id');
+                    loadComments(articleId);
+                })
+                .catch(error => {
+                    console.error('Error deleting comment:', error);
+                    alert('Error deleting comment. Please try again.');
+                });
+            }
+        };
+        
+        // Delete reply (for reply owner)
+        window.deleteReply = function(replyId) {
+            if (confirm('Are you sure you want to delete this reply?')) {
+                fetch(`/api/comments/reply/${replyId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Reload comments for the current article
+                    const articleId = document.getElementById('submitComment').getAttribute('data-article-id');
+                    loadComments(articleId);
+                })
+                .catch(error => {
+                    console.error('Error deleting reply:', error);
+                    alert('Error deleting reply. Please try again.');
+                });
+            }
+        };
+    });
+    </script>
+    <!-- Chart.js for analytics charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- Link to external JS using url_for -->
+    <script src="{{ url_for('static', filename='js/weather_init.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api_validator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/weather_extensions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vitamin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sunrise-sunset.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/carbon.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+  </body>
+</html>

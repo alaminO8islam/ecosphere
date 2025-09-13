@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EcoSphere – Harmony Between Sun, Earth & You</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --primary: #FF9F1C; /* Sun orange */
@@ -31,7 +32,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif; /* Replace any other font-family declarations */
+      font-family: 'Poppins', sans-serif;
       transition: all 0.3s ease;
     }
 
@@ -44,7 +45,7 @@
     }
 
     h1, h2, h3, h4 {
-      font-family: 'Poppins', sans-serif; /* Remove Playfair Display */
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       line-height: 1.2;
     }
@@ -551,7 +552,7 @@
       background: linear-gradient(90deg, var(--primary), var(--secondary));
     }
 
-    /* Modal */
+    /* Enhanced Modal Styles */
     .modal {
       position: fixed;
       top: 0;
@@ -587,11 +588,15 @@
       overflow: hidden;
     }
 
+    .modal-content.small-modal {
+      max-width: 400px;
+    }
+
     .modal.active .modal-content {
       transform: translateY(0);
     }
 
-    .modal-close {
+    .modal-close, .close-modal {
       position: absolute;
       top: 1rem;
       right: 1rem;
@@ -600,9 +605,11 @@
       color: var(--text-light);
       transition: color 0.3s ease;
       z-index: 2;
+      background: none;
+      border: none;
     }
 
-    .modal-close:hover {
+    .modal-close:hover, .close-modal:hover {
       color: var(--danger);
     }
 
@@ -618,7 +625,7 @@
 
     .modal-image {
       width: 100%;
-      height: 150px;
+      height: 140px;
       object-fit: cover;
       border-radius: 0.5rem;
       margin-bottom: 1.5rem;
@@ -626,11 +633,85 @@
       z-index: 1;
     }
 
+    /* Form Styles */
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-row input {
+      flex: 1;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"] {
+      width: 100%;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="date"]:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 159, 28, 0.2);
+    }
+
+    /* Verification Code Display */
+    .code-display {
+      background-color: var(--accent);
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 0.5rem;
+      margin: 1rem 0;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+    }
+
+    /* Resend Code Section */
+    .resend-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      color: var(--text-light);
+    }
+
+    /* Login Specific Styles */
+.error-message {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left: 3px solid #e74c3c;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.login-message {
+      text-align: center;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
     .modal-buttons {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      margin-top: 2rem;
+      gap: 0.5rem;
+      margin-top: 1rem;
       position: relative;
       z-index: 1;
     }
@@ -645,7 +726,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.8rem;
+      gap: 0.5rem;
       border: none;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -699,6 +780,35 @@
   background-color: var(--card);
 }
 
+.modal-btn.create {
+  background-color: var(--card);
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  /* Remove any pointer-events: none if present */
+  pointer-events: auto !important;
+}
+
+.modal-btn.create:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background-color: var(--accent);
+}
+
+    .modal-btn.create:hover:not(:disabled) {
+      background-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .modal-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .modal-btn.create[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--card);
+}
+
     /* Add this if not already present */
 .modal-buttons a,
 .modal-buttons button {
@@ -718,6 +828,25 @@
   opacity: 1; /* Fully visible */
   transform: translateY(0); /* Final position */
   pointer-events: auto; /* Enable clicks */
+}
+
+.modal-btn[disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.modal-buttons {
+  pointer-events: auto !important;
+}
+
+.modal-btn {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+.modal-btn[disabled] {
+  pointer-events: none !important;
+  opacity: 0.5 !important;
 }
 
     .terms-checkbox {
@@ -1036,24 +1165,24 @@
   </section>
 
   <!-- Contact Section -->
- <section id="contact" class="contact">
-  <h2 class="section-title">Contact Us</h2>
-  <p>Have questions or feedback? We'd love to hear from you.</p>
-  <div class="email-container">
-    <a href="mailto:ecosphere.feedback@gmail.com" class="email-button">
-      <i class="fas fa-envelope"></i>
-      ecosphere.feedback@gmail.com
-    </a>
-  </div>
-  <p class="response-time">Drop us a message - we respond within 24 hours</p>
-</section>
+  <section id="contact" class="contact">
+    <h2 class="section-title">Contact Us</h2>
+    <p>Have questions or feedback? We'd love to hear from you.</p>
+    <div class="email-container">
+      <a href="mailto:ecosphere.feedback@gmail.com" class="email-button">
+        <i class="fas fa-envelope"></i>
+        ecosphere.feedback@gmail.com
+      </a>
+    </div>
+    <p class="response-time">Drop us a message - we respond within 24 hours</p>
+  </section>
 
   <!-- Footer -->
   <footer>
     <p>&copy; 2023 EcoSphere. All rights reserved.</p>
   </footer>
 
-  <!-- Sign In Modal -->
+  <!-- 🔐 Sign In Modal -->
   <div id="signInModal" class="modal">
     <div class="modal-content">
       <span class="modal-close">&times;</span>
@@ -1063,295 +1192,580 @@
       
       <div class="terms-checkbox">
         <input type="checkbox" id="termsAgreement">
-        <label for="termsAgreement">I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a></label>
+        <label for="termsAgreement">I agree to the <a href="#" id="showTerms">Terms of Service</a> and <a href="#" id="showPrivacy">Privacy Policy</a></label>
       </div>
       
       <div class="modal-buttons">
-        <a href="{{ url_for('auth.google_login') }}" id="googleSignIn" class="modal-btn google" disabled>
+        <button id="googleSignIn" class="modal-btn google" disabled>
           <i class="fab fa-google"></i> Continue with Google
-        </a>
+        </button>
+        <button id="openCreateAccountModal" class="modal-btn create" disabled>
+          <i class="fas fa-user-plus"></i> Create an Account
+        </button>
         <button id="guestSignIn" class="modal-btn guest" disabled>
           <i class="fas fa-user"></i> Continue as Guest
         </button>
       </div>
     </div>
-</div>
+  </div>
 
-<!-- Terms & Privacy Modal -->
-<div id="termsModal" class="modal">
-  <div class="modal-content">
-    <button class="modal-back-btn">&larr;</button>
-    <h2 class="modal-title">Privacy Policy & Terms</h2>
-    <div class="terms-content">
-      <h3>Privacy Policy</h3>
-      <p>EcoSphere respects your privacy. We collect only essential data to:</p>
-      <ul>
-        <li>Personalize your sun exposure recommendations</li>
-        <li>Calculate your environmental impact accurately</li>
-        <li>Improve our services through anonymous analytics</li>
-      </ul>
-      <p>Your data is never sold to third parties. We use industry-standard encryption for all transmissions.</p>
+  <!-- 🔐 Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2 class="modal-title">Welcome Back</h2>
+      <p class="login-message">Sign in to continue your journey to perfect sun-earth harmony</p>
       
-      <h3>Terms of Service</h3>
-      <p>By using EcoSphere, you agree to:</p>
-      <ul>
-        <li>Provide accurate location data for sun tracking</li>
-        <li>Use the service for personal, non-commercial purposes</li>
-        <li>Not attempt to reverse-engineer our algorithms</li>
-      </ul>
-      <p>We may update these terms periodically. Continued use constitutes acceptance.</p>
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email Address" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit" class="modal-btn primary" style="width: 100%;">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+      </form>
       
-      <h3>Data Collection</h3>
-      <p>We collect:</p>
-      <ul>
-        <li>Location data (for UV/sun position calculations)</li>
-        <li>Activity logs (to measure environmental impact)</li>
-        <li>Device information (for optimal performance)</li>
-      </ul>
+      <div class="modal-buttons" style="margin-top: 1rem;">
+        <button id="forgotPasswordBtn" class="modal-btn guest" style="width: 100%;">
+          <i class="fas fa-key"></i> Forgot Password?
+        </button>
+      </div>
     </div>
   </div>
-</div>
-  
-  <script>
-    // Enhanced Modal Functionality
-const mainModal = document.getElementById('signInModal');
-const termsModal = document.getElementById('termsModal');
-const modalTriggers = document.querySelectorAll('#loginBtn, #getStartedBtn, #contactBtn');
-const modalClose = document.querySelector('.modal-close');
-const backButton = document.querySelector('.modal-back-btn');
-const termsLinks = document.querySelectorAll('.terms-checkbox a');
-const termsCheckbox = document.getElementById('termsAgreement');
-const googleSignIn = document.getElementById('googleSignIn');
-const guestSignIn = document.getElementById('guestSignIn');
 
-// Initialize modal state
-if (localStorage.getItem('termsAgreed') !== 'true') {
-    resetModalState();
-}
-
-// Open main modal with fresh state
-modalTriggers.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        resetModalState();
-        mainModal.classList.add('active');
-    });
-});
-
-// Handle terms checkbox
-termsCheckbox.addEventListener('change', () => {
-  if (termsCheckbox.checked) {
-    // Show loading state immediately
-    termsCheckbox.disabled = true;
-    
-    // Add 3-second delay before showing buttons
-    setTimeout(() => {
-      googleSignIn.style.display = 'flex';
-      guestSignIn.style.display = 'flex';
-      guestSignIn.removeAttribute('disabled');
-      termsCheckbox.disabled = false;
-      localStorage.setItem('termsAgreed', 'true');
-
-      // Enhanced hover effects for buttons
-[googleSignIn, guestSignIn].forEach(btn => {
-  btn.addEventListener('mouseenter', () => {
-    if (!termsCheckbox.checked) return;
-    btn.style.transform = 'scale(1.02)';
-  });
-  
-  btn.addEventListener('mouseleave', () => {
-    btn.style.transform = '';
-  });
-});
+  <!-- 🔐 Create Account Modal -->
+  <div id="createAccountModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2 class="modal-title">Create Your Account</h2>
       
-      // Add smooth fade-in animation
-      googleSignIn.style.animation = 'fadeIn 0.5s ease-out';
-      guestSignIn.style.animation = 'fadeIn 0.5s ease-out';
-    }, 500); // 500ms = 0.5  Seconds
-  } else {
-    // Immediate response when unchecking
-    googleSignIn.style.display = 'none';
-    guestSignIn.style.display = 'none';
-    guestSignIn.setAttribute('disabled', 'true');
-    localStorage.removeItem('termsAgreed');
+      <form id="createAccountForm">
+        <div class="form-row">
+          <input type="text" id="firstName" placeholder="First Name" required>
+          <input type="text" id="lastName" placeholder="Last Name" required>
+        </div>
+        <input type="email" id="createEmail" placeholder="Email Address" required>
+        <input type="password" id="createPassword" placeholder="Password" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <button type="submit" class="modal-btn primary" style="width: 100%;">Next</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 🔐 Verification Code Modal -->
+  <div id="verifyCodeModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2 class="modal-title">Enter Verification Code</h2>
+      <p>A 6-digit code has been generated for you. Please enter it below:</p>
+      <div id="code-display" class="code-display">583241</div>
+      <form id="verifyCodeForm">
+        <input type="text" id="enteredCode" placeholder="Enter code here" maxlength="6" required>
+        <button type="submit" class="modal-btn primary" style="width: 100%;">Verify</button>
+      </form>
+      <div class="resend-info">
+        <span id="timer">Resend in 60s</span>
+        <button id="resendCodeBtn" class="modal-btn guest" style="display:none;">Resend Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎂 Birthday Modal -->
+  <div class="modal" id="birthdayModal">
+    <div class="modal-content small-modal">
+      <h2 class="modal-title">When's your birthday?</h2>
+      <p style="text-align: center; color: var(--text-light); margin-bottom: 1.5rem;">
+        This helps us personalize your EcoSphere experience.
+      </p>
+      <form id="birthdayForm">
+        <input type="date" id="birthdayInput" required />
+        <button type="submit" class="modal-btn primary" style="width: 100%; margin-top: 1rem;">Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Terms & Privacy Modal -->
+  <div id="termsModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-back-btn">&larr;</button>
+      <h2 class="modal-title">Privacy Policy & Terms</h2>
+      <div class="terms-content">
+        <h3>Privacy Policy</h3>
+        <p>EcoSphere respects your privacy. We collect only essential data to:</p>
+        <ul>
+          <li>Personalize your sun exposure recommendations</li>
+          <li>Calculate your environmental impact accurately</li>
+          <li>Improve our services through anonymous analytics</li>
+        </ul>
+        <p>Your data is never sold to third parties. We use industry-standard encryption for all transmissions.</p>
+        
+        <h3>Terms of Service</h3>
+        <p>By using EcoSphere, you agree to:</p>
+        <ul>
+          <li>Provide accurate location data for sun tracking</li>
+          <li>Use the service for personal, non-commercial purposes</li>
+          <li>Not attempt to reverse-engineer our algorithms</li>
+        </ul>
+        <p>We may update these terms periodically. Continued use constitutes acceptance.</p>
+        
+        <h3>Data Collection</h3>
+        <p>We collect:</p>
+        <ul>
+          <li>Location data (for UV/sun position calculations)</li>
+          <li>Activity logs (to measure environmental impact)</li>
+          <li>Device information (for optimal performance)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+ <script>
+  // ====================== MODAL MANAGEMENT ====================== //
+  // Modal elements
+  const modals = {
+    signInModal: document.getElementById('signInModal'),
+    loginModal: document.getElementById('loginModal'),
+    createAccountModal: document.getElementById('createAccountModal'),
+    verifyCodeModal: document.getElementById('verifyCodeModal'),
+    birthdayModal: document.getElementById('birthdayModal'),
+    termsModal: document.getElementById('termsModal')
+  };
+
+  // Open modal function
+  function openModal(modalId) {
+    modals[modalId].classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
+
+  // Close modal function
+  function closeModal(modalId) {
+    modals[modalId].classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  // Modal triggers - Fixed these event listeners
+  document.getElementById('getStartedBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('signInModal');
+  });
+
+  document.getElementById('loginBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('loginModal');
+  });
+
+  document.getElementById('openCreateAccountModal')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeModal('signInModal');
+    openModal('createAccountModal');
+  });
+
+  // Terms and Privacy links
+  document.getElementById('showTerms')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeModal('signInModal');
+    openModal('termsModal');
+  });
+
+  document.getElementById('showPrivacy')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeModal('signInModal');
+    openModal('termsModal');
+  });
+
+  // Close buttons
+  document.querySelectorAll('.modal-close, .close-modal').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const modal = btn.closest('.modal');
+      closeModal(modal.id);
+    });
+  });
+
+  // Back button in terms modal
+  document.querySelector('.modal-back-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeModal('termsModal');
+    openModal('signInModal');
+  });
+
+  // Close modal when clicking outside
+  window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal') && 
+        !e.target.closest('.modal-content')) {
+      closeModal(e.target.id);
+    }
+  });
+
+  // ====================== TERMS AGREEMENT ====================== //
+  const termsCheckbox = document.getElementById('termsAgreement');
+  const googleSignIn = document.getElementById('googleSignIn');
+  const createAccountBtn = document.getElementById('openCreateAccountModal');
+  const guestSignIn = document.getElementById('guestSignIn');
+
+  // Initialize buttons as hidden
+  if (googleSignIn && createAccountBtn && guestSignIn) {
+    googleSignIn.style.display = 'none';
+    createAccountBtn.style.display = 'none';
+    guestSignIn.style.display = 'none';
+
+    termsCheckbox?.addEventListener('change', () => {
+      if (termsCheckbox.checked) {
+        googleSignIn.style.display = 'flex';
+        createAccountBtn.style.display = 'flex';
+        guestSignIn.style.display = 'flex';
+        
+        // Remove disabled state immediately
+        googleSignIn.disabled = false;
+        createAccountBtn.disabled = false;
+        guestSignIn.disabled = false;
+        
+        // Force reflow to ensure animations work
+        void googleSignIn.offsetWidth;
+        
+        // Add animations
+        googleSignIn.style.animation = 'fadeIn 0.3s forwards';
+        createAccountBtn.style.animation = 'fadeIn 0.3s forwards';
+        guestSignIn.style.animation = 'fadeIn 0.3s forwards';
+      } else {
+        // Reverse the process
+        googleSignIn.style.animation = 'none';
+        createAccountBtn.style.animation = 'none';
+        guestSignIn.style.animation = 'none';
+        
+        setTimeout(() => {
+          googleSignIn.style.display = 'none';
+          createAccountBtn.style.display = 'none';
+          guestSignIn.style.display = 'none';
+        }, 10);
+      }
+    });
+  }
+
+  // ====================== FORM HANDLING ====================== //
+// Email validation regex pattern
+const emailPattern = /^[\w\.-]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+// Create Account Form Submission
+document.getElementById('createAccountForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const first = document.getElementById('firstName').value;
+    const last = document.getElementById('lastName').value;
+    const email = document.getElementById('createEmail').value;
+    const password = document.getElementById('createPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Email validation
+    if (!emailPattern.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/auth/create_account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ first_name: first, last_name: last, email, password })
+        });
+
+        // First check if response is OK (status 200-299)
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('code-display').textContent = data.code;
+            closeModal('createAccountModal');
+            openModal('verifyCodeModal');
+            startTimer();
+        } else {
+            // If response is not OK, try to get error message
+            try {
+                const errorData = await response.json();
+                alert(errorData.error || errorData.message || `Account creation failed (Status: ${response.status})`);
+            } catch (parseError) {
+                // If we can't parse JSON error, show generic error
+                alert(`Server error: ${response.status} ${response.statusText}`);
+            }
+        }
+    } catch (err) {
+        console.error('Network error:', err);
+        alert('Network error. Please check your connection and try again.');
+    }
 });
 
-// Enhanced hover effects for buttons
-[googleSignIn, guestSignIn].forEach(btn => {
-  btn.addEventListener('mouseenter', () => {
-    if (!termsCheckbox.checked) return;
-    btn.style.transform = 'scale(1.02)';
+document.getElementById('verifyCodeForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('createEmail').value;
+    const enteredCode = document.getElementById('enteredCode').value;
+
+    try {
+        const response = await fetch('/api/auth/verify_code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code: enteredCode })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            window.verifiedUserId = data.user_id;
+            closeModal('verifyCodeModal');
+            openModal('birthdayModal');
+        } else {
+            try {
+                const errorData = await response.json();
+                alert(errorData.error || errorData.message || 'Verification failed.');
+            } catch (parseError) {
+                alert(`Verification error: ${response.status}`);
+            }
+        }
+    } catch (err) {
+        console.error('Network error:', err);
+        alert('Network error during verification.');
+    }
+});
+
+document.getElementById('birthdayForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const birthday = document.getElementById('birthdayInput').value;
+
+    try {
+        const response = await fetch('/api/auth/save_birthday', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                birthday: birthday
+            })
+        });
+
+        if (response.ok) {
+            window.location.href = '/dashboard';
+        } else {
+            try {
+                const errorData = await response.json();
+                alert(errorData.error || errorData.message || 'Saving birthday failed.');
+            } catch (parseError) {
+                alert(`Birthday save error: ${response.status}`);
+            }
+        }
+    } catch (err) {
+        console.error('Network error:', err);
+        alert('Network error submitting birthday.');
+    }
+});
+
+  document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Show loading state
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+    submitBtn.disabled = true;
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success - redirect to dashboard
+        window.location.href = '/dashboard';
+      } else if (response.status === 401) {
+        // Authentication error
+        showLoginError('Invalid email or password. Please try again.');
+      } else if (response.status === 500) {
+        // Server error
+        showLoginError('Server error. Please check if the database is properly configured.');
+      } else {
+        // Other errors
+        showLoginError(data.error || 'Login failed. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      showLoginError('Connection error. Please check your database configuration.');
+    } finally {
+      // Reset button state
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.disabled = false;
+    }
   });
   
-  btn.addEventListener('mouseleave', () => {
-    btn.style.transform = '';
-  });
-});
-// Close modals
-modalClose.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeModals();
-});
+  // Function to show login error message
+  function showLoginError(message) {
+    const errorElement = document.getElementById('loginError');
+    if (!errorElement) {
+      const errorDiv = document.createElement('div');
+      errorDiv.id = 'loginError';
+      errorDiv.className = 'error-message';
+      const form = document.getElementById('loginForm');
+      form.insertBefore(errorDiv, form.firstChild);
+    }
+    document.getElementById('loginError').textContent = message;
+    document.getElementById('loginError').style.display = 'block';
+  }
 
-backButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    termsModal.classList.remove('active');
-    mainModal.classList.add('active');
-});
-
-// Open terms modal
-termsLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        mainModal.classList.remove('active');
-        termsModal.classList.add('active');
+  // ====================== VERIFICATION TIMER ====================== //
+  function startTimer() {
+    let timeLeft = 60;
+    const timerElement = document.getElementById('timer');
+    const resendBtn = document.getElementById('resendCodeBtn');
+    
+    const timer = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = `Resend in ${timeLeft}s`;
+      
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        timerElement.style.display = 'none';
+        resendBtn.style.display = 'block';
+      }
+    }, 1000);
+    
+    resendBtn?.addEventListener('click', () => {
+      
+      // Reset timer
+      timerElement.style.display = 'inline';
+      resendBtn.style.display = 'none';
+      timeLeft = 60;
+      startTimer();
     });
-});
+  }
 
-// Close modals when clicking outside
-window.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal')) {
-        closeModals();
-    }
-});
-
-// ====== PASTE THIS CODE ====== //
-// Google Sign-In - Correct Redirect
-document.getElementById('googleSignIn').addEventListener('click', function(e) {
+  // Google Sign-In
+  document.getElementById('googleSignIn')?.addEventListener('click', function(e) {
     e.preventDefault();
     if (!termsCheckbox.checked) {
-        alert('Please agree to the Terms of Service first');
-        return;
+      alert('Please agree to the Terms of Service first');
+      return;
     }
-    window.location.href = '/login/google';  // ✅ Correct route here
-});
+    window.location.href = '/login/google';
+  });
 
-// Guest Sign-In - Correct API Call
-document.getElementById('guestSignIn').addEventListener('click', function(e) {
+  // Guest Sign-In
+  document.getElementById('guestSignIn')?.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (!termsCheckbox.checked) {
-        alert('Please agree to the Terms of Service first');
-        return;
-    }
 
     const guestBtn = e.target;
     const originalText = guestBtn.innerHTML;
     guestBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
     guestBtn.disabled = true;
 
-    fetch('/api/auth/guest', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' }
-})
-.then(res => res.json())
-.then(data => {
-  console.log('Guest Login Success:', data);
-  window.location.href = '/app/dashboard.html';
-})
-.catch(error => {
-  console.error('Guest Login Error:', error);
-  alert('Guest login failed. Try again.');
-});
-});
-
-// Helper functions
-function resetModalState() {
-    termsCheckbox.checked = false;
-    googleSignIn.style.display = 'none';
-    guestSignIn.style.display = 'none';
-}
-
-function closeModals() {
-    mainModal.classList.remove('active');
-    termsModal.classList.remove('active');
-    setTimeout(() => {
-        if (localStorage.getItem('termsAgreed') !== 'true') {
-            resetModalState();
-            mainModal.classList.add('active');
-        }
-    }, 1000);
-}
-
-    // Animate elements when they come into view
-    const animateOnScroll = () => {
-      const elements = document.querySelectorAll('.feature-card, .stat-item, .article-card');
-      
-      elements.forEach(element => {
-        const elementPosition = element.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-        
-        if (elementPosition < windowHeight - 100) {
-          element.style.opacity = '1';
-          element.style.transform = 'translateY(0)';
-        }
+    try {
+      const response = await fetch('/api/auth/guest', {
+        method: 'POST'
       });
-    };
 
-    // Set initial state for animation
-    document.querySelectorAll('.feature-card, .stat-item, .article-card').forEach(element => {
-      element.style.opacity = '0';
-      element.style.transform = 'translateY(20px)';
-      element.style.transition = 'all 0.6s ease';
-    });
+      const data = await response.json();
 
-    // Run once on load
-    animateOnScroll();
-
-    // Run on scroll
-    window.addEventListener('scroll', animateOnScroll);
-
-    // Create sun rays in hero section
-    const hero = document.querySelector('.hero');
-    for (let i = 0; i < 8; i++) {
-      const ray = document.createElement('div');
-      ray.className = 'ray';
-      ray.style.position = 'absolute';
-      ray.style.width = '2px';
-      ray.style.height = '100px';
-      ray.style.backgroundColor = 'rgba(255, 191, 105, 0.3)';
-      ray.style.top = '50%';
-      ray.style.left = '50%';
-      ray.style.transformOrigin = 'bottom center';
-      ray.style.transform = `translate(-50%, -50%) rotate(${i * 45}deg)`;
-      hero.appendChild(ray);
-    }
-
-    // Create floating sun particles
-    const sunPath = document.querySelector('.sun-path');
-    for (let i = 0; i < 20; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'sun-particle';
-      particle.style.position = 'absolute';
-      particle.style.width = `${Math.random() * 10 + 5}px`;
-      particle.style.height = particle.style.width;
-      particle.style.backgroundColor = 'rgba(255, 191, 105, 0.5)';
-      particle.style.borderRadius = '50%';
-      particle.style.top = `${Math.random() * 100}%`;
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.animation = `float ${Math.random() * 10 + 5}s infinite ease-in-out`;
-      particle.style.opacity = Math.random() * 0.5 + 0.3;
-      sunPath.appendChild(particle);
-    }
-
-    // Add animation for floating particles
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes float {
-        0% { transform: translateY(0) translateX(0); }
-        50% { transform: translateY(-20px) translateX(10px); }
-        100% { transform: translateY(0) translateX(0); }
+      if (response.ok) {
+        window.location.href = '/dashboard';
+      } else {
+        alert(data.error || 'Guest sign-in failed.');
+        guestBtn.innerHTML = originalText;
+        guestBtn.disabled = false;
       }
-    `;
-    document.head.appendChild(style);
+    } catch (err) {
+      console.error(err);
+      alert('Error during guest sign-in.');
+      guestBtn.innerHTML = originalText;
+      guestBtn.disabled = false;
+    }
+  });
 
-    setTimeout(() => {
-  googleSignIn.classList.add('active');
-  guestSignIn.classList.add('active');
-  // Remove this line: googleSignIn.style.display = 'flex';
-  // Remove this line: guestSignIn.style.display = 'flex';
-}, 3000);
+  // Forgot Password
+  document.getElementById('forgotPasswordBtn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    alert('Password reset link has been sent to your email!');
+  });
+ 
+  // Animate elements when they come into view
+  const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.feature-card, .stat-item, .article-card');
+    
+    elements.forEach(element => {
+      const elementPosition = element.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      
+      if (elementPosition < windowHeight - 100) {
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+      }
+    });
+  };
 
-  </script>
+  // Set initial state for animation
+  document.querySelectorAll('.feature-card, .stat-item, .article-card').forEach(element => {
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(20px)';
+    element.style.transition = 'all 0.6s ease';
+  });
+
+  // Run once on load
+  animateOnScroll();
+
+  // Run on scroll
+  window.addEventListener('scroll', animateOnScroll);
+
+  // Create sun rays in hero section
+  const hero = document.querySelector('.hero');
+  for (let i = 0; i < 8; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'ray';
+    ray.style.position = 'absolute';
+    ray.style.width = '2px';
+    ray.style.height = '100px';
+    ray.style.backgroundColor = 'rgba(255, 191, 105, 0.3)';
+    ray.style.top = '50%';
+    ray.style.left = '50%';
+    ray.style.transformOrigin = 'bottom center';
+    ray.style.transform = `translate(-50%, -50%) rotate(${i * 45}deg)`;
+    hero.appendChild(ray);
+  }
+
+  // Create floating sun particles
+  const sunPath = document.querySelector('.sun-path');
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'sun-particle';
+    particle.style.position = 'absolute';
+    particle.style.width = `${Math.random() * 10 + 5}px`;
+    particle.style.height = particle.style.width;
+    particle.style.backgroundColor = 'rgba(255, 191, 105, 0.5)';
+    particle.style.borderRadius = '50%';
+    particle.style.top = `${Math.random() * 100}%`;
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.animation = `float ${Math.random() * 10 + 5}s infinite ease-in-out`;
+    particle.style.opacity = Math.random() * 0.5 + 0.3;
+    sunPath.appendChild(particle);
+  }
+
+  // Add animation for floating particles
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-20px) translateX(10px); }
+      100% { transform: translateY(0) translateX(0); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
 </body>
 </html>

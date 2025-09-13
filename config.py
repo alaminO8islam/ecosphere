@@ -1,0 +1,12 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+OPENUV_API_KEY = os.getenv("OPENUV_API_KEY")
+OPENUV_API_KEY_BACKUP1 = os.getenv("OPENUV_API_KEY_BACKUP1")
+OPENUV_API_KEY_BACKUP2 = os.getenv("OPENUV_API_KEY_BACKUP2")
+SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+SECRET_KEY = os.getenv("SECRET_KEY")
+SQLALCHEMY_TRACK_MODIFICATIONS = False

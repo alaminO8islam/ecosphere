@@ -73,27 +73,56 @@ All forms (login, profile editing, verification) use modal popups for seamless U
 ### 📁 Project Structure
 
 ```
-├── .venv/                      # Virtual environment (hidden)
+ecosphere/
 ├── app/
-│   ├── routes/                 # Application route handlers
-│   │   ├── __init__.py
-│   │   ├── auth.py             # Authentication routes
-│   │   ├── carbon.py           # Carbon footprint related routes
-│   │   ├── dashboard.py        # Dashboard-related routes
-│   │   ├── notes.py            # Notes feature routes
-│   │   └── notifications.py    # Notification-related routes
-│   ├── static/                 # Static HTML files
-│   │   ├── dashboard.html
-│   │   └── index.html
-│   ├── templates/              # Jinja2 HTML templates
-│   │   └── __init__.py
-│   └── models.py               # Database models
-├── .env                        # Environment variables
-├── config.py                   # App configuration
-├── ecosphere_schema.sql        # SQL schema for database
-├── README.md                   # Project documentation
-├── requirements.txt            # Python dependencies
-└── run.py                      # Entry point to run the application
+│ ├── routes/
+│ │ ├── init.py
+│ │ ├── article.py
+│ │ ├── auth.py
+│ │ ├── carbon.py
+│ │ ├── comments.py
+│ │ ├── dashboard.py
+│ │ ├── env.py
+│ │ ├── main.py
+│ │ ├── notes.py
+│ │ ├── notifications.py
+│ │ ├── progress.py
+│ │ ├── users.py
+│ │ └── vitamin.py
+│ │
+│ ├── static/
+│ │ ├── css/
+│ │ │ └── dashboard.css
+│ │ ├── js/
+│ │ │ ├── analytics.js
+│ │ │ ├── carbon.js
+│ │ │ ├── dashboard.js
+│ │ │ ├── sunrise-sunset.js
+│ │ │ ├── vitamin.js
+│ │ │ ├── weather.js
+│ │ │ └── weather_extensions.js
+│ │ └── uploads/
+│ │
+│ ├── templates/
+│ │ ├── dashboard.html
+│ │ ├── energy.html
+│ │ ├── food.html
+│ │ ├── index.html
+│ │ └── transport.html
+│ │
+│ ├── init.py
+│ └── models.py
+│
+├── instance/
+│
+├── migrations/
+│
+├── .gitignore
+├── config.py
+├── ecosphere_schema.sql
+├── init_db.py
+├── requirements.txt
+└── run.py
 ```
 
 ---
@@ -121,3 +150,4 @@ python run.py
 ## 🤝 Contributing
 
 Coming soon. For now, follow our branching strategy below ↓
+

@@ -1,0 +1,41 @@
+__pycache__/
+*.py[cod]
+# Virtual environments
+venv/
+env/
+ENV/
+config/
+
+# Flask instance folder (if it contains sensitive data)
+instance/
+
+# Environment variables
+.env
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database files (be careful with this - only add if you don't want to track DB files)
+*.db
+*.sqlite
+
+# Logs
+logs/
+*.log
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# Temporary files
+tmp/
+temp/

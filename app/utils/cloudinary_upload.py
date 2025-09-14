@@ -1,13 +1,15 @@
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-from app import config
+import os
+from dotenv import load_dotenv
 
-# Configure Cloudinary
+load_dotenv()
+
 cloudinary.config(
-    cloud_name=config.CLOUDINARY_CLOUD_NAME,
-    api_key=config.CLOUDINARY_API_KEY,
-    api_secret=config.CLOUDINARY_API_SECRET
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
 
 def upload_to_cloudinary(file, folder="ecosphere_articles"):
@@ -23,7 +25,7 @@ def upload_to_cloudinary(file, folder="ecosphere_articles"):
             unique_filename=True,
             overwrite=False
         )
-        return result['secure_url']  # Returns HTTPS URL
+        return result['secure_url']
     except Exception as e:
         print(f"Cloudinary upload error: {e}")
         return None

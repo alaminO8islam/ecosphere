@@ -1,7 +1,7 @@
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-from app.config import config
+from app import config
 
 # Configure Cloudinary
 cloudinary.config(

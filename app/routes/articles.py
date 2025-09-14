@@ -3,12 +3,13 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from app.models import Article, log_user_activity
 from app import db
+from app.utils.cloudinary_upload import upload_to_cloudinary
 import os
 import uuid
 
 bp = Blueprint('articles', __name__, url_prefix='/api/articles')
 
-# Configure upload folder
+# Configure upload folder (for text files only - images go to Cloudinary)
 UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 ALLOWED_TEXT_EXTENSIONS = {'txt'}
@@ -56,7 +57,7 @@ def get_article(article_id):
 @bp.route('/', methods=['POST'])
 @login_required
 def create_article():
-    # Check if upload folder exists, if not create it
+    # Check if upload folder exists for text files
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     
@@ -66,20 +67,18 @@ def create_article():
     if not title or not content:
         return jsonify({'error': 'Missing required fields'}), 400
     
-    image_path = None
+    image_url = None
     
-    # Handle image upload
+    # Handle image upload to Cloudinary
     if 'image' in request.files:
         image_file = request.files['image']
         if image_file and allowed_image_file(image_file.filename):
-            # Generate unique filename
-            filename = secure_filename(image_file.filename)
-            unique_filename = f"{uuid.uuid4()}_{filename}"
-            file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
-            image_file.save(file_path)
-            image_path = f"/static/uploads/{unique_filename}"
+            # Upload to Cloudinary
+            image_url = upload_to_cloudinary(image_file)
+            if not image_url:
+                return jsonify({'error': 'Failed to upload image'}), 500
     
-    # Handle text file upload
+    # Handle text file upload (local storage)
     if 'text_file' in request.files:
         text_file = request.files['text_file']
         if text_file and allowed_text_file(text_file.filename):
@@ -93,7 +92,7 @@ def create_article():
         user_id=current_user.id,
         title=title,
         content=content,
-        image_path=image_path
+        image_path=image_url  # Now stores Cloudinary URL instead of local path
     )
     
     db.session.add(new_article)
@@ -112,10 +111,6 @@ def update_article(article_id):
     if not article:
         return jsonify({'error': 'Article not found or you do not have permission to edit it'}), 404
     
-    # Check if upload folder exists, if not create it
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
-    
     # Get form data
     title = request.form.get('title')
     content = request.form.get('content')
@@ -125,22 +120,14 @@ def update_article(article_id):
     if content:
         article.content = content
     
-    # Handle image upload
+    # Handle image upload to Cloudinary
     if 'image' in request.files:
         image_file = request.files['image']
         if image_file and allowed_image_file(image_file.filename):
-            # Delete old image if it exists
-            if article.image_path:
-                old_file_path = os.path.join(current_app.root_path, article.image_path.lstrip('/'))
-                if os.path.exists(old_file_path):
-                    os.remove(old_file_path)
-            
-            # Generate unique filename
-            filename = secure_filename(image_file.filename)
-            unique_filename = f"{uuid.uuid4()}_{filename}"
-            file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
-            image_file.save(file_path)
-            article.image_path = f"/static/uploads/{unique_filename}"
+            # Upload new image to Cloudinary
+            image_url = upload_to_cloudinary(image_file)
+            if image_url:
+                article.image_path = image_url  # Store Cloudinary URL
     
     # Handle text file upload
     if 'text_file' in request.files:
@@ -151,11 +138,8 @@ def update_article(article_id):
             article.content = file_content
     
     # Handle image removal
-    if request.form.get('remove_image') == 'true' and article.image_path:
-        old_file_path = os.path.join(current_app.root_path, article.image_path.lstrip('/'))
-        if os.path.exists(old_file_path):
-            os.remove(old_file_path)
-        article.image_path = None
+    if request.form.get('remove_image') == 'true':
+        article.image_path = None  # Just set to None, no file deletion needed
     
     db.session.commit()
     
@@ -172,11 +156,8 @@ def delete_article(article_id):
     if not article:
         return jsonify({'error': 'Article not found or you do not have permission to delete it'}), 404
     
-    # Delete the image file if it exists
-    if article.image_path:
-        file_path = os.path.join(current_app.root_path, article.image_path.lstrip('/'))
-        if os.path.exists(file_path):
-            os.remove(file_path)
+    # Note: With Cloudinary, we don't need to delete the image file manually
+    # Cloudinary has its own management system
     
     db.session.delete(article)
     db.session.commit()

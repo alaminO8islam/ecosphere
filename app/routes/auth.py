@@ -208,8 +208,15 @@ def api_save_birthday():
     db.session.add(activity)
     db.session.commit()
 
+    # Login the user and maintain the session
     login_user(new_user)
-    session.clear()
+    
+    # Clear only the registration-related session data
+    # but keep the Flask-Login session intact
+    for key in ['verification_code', 'pending_email', 'pending_first_name', 
+               'pending_last_name', 'pending_password', 'code_expiry', 'verified']:
+        if key in session:
+            session.pop(key)
 
     return jsonify({"message": "User registered successfully", "user_id": new_user.id}), 201
 

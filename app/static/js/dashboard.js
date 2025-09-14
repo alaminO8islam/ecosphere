@@ -1223,7 +1223,7 @@ function initializeNoteModal() {
  */
 function loadUserData() {
     // Try to fetch from API first
-    fetch('/api/users/profile')
+    fetch('/api/auth/user')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -1234,9 +1234,9 @@ function loadUserData() {
             if (data.user) {
                 // Update USER object with server data
                 USER.id = data.user.id || USER.id;
-                USER.name = data.user.name || USER.name;
+                USER.name = `${data.user.first_name} ${data.user.last_name}` || USER.name;
                 USER.email = data.user.email || USER.email;
-                USER.points = data.user.points || USER.points;
+                USER.points = data.user.progress || USER.points;
                 USER.unlockedBadges = data.user.badges || USER.unlockedBadges;
                 USER.displayBadge = data.user.display_badge || USER.displayBadge;
                 USER.bio = data.user.bio || USER.bio;

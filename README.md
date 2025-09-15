@@ -193,9 +193,10 @@ EcoSphere’s dashboard is fully responsive, ensuring a seamless user experience
 | **Framework**       | <img src="https://img.icons8.com/ios-filled/50/000000/flask.png" height="20"/> Flask                                                                                                                                                                                 | Web framework to build server routes, templates, and backend functionality. |
 | **Frontend**        | <img src="https://img.icons8.com/color/48/000000/html-5--v1.png" height="20"/> HTML<br><img src="https://img.icons8.com/color/48/000000/css3.png" height="20"/> CSS<br><img src="https://img.icons8.com/color/48/000000/javascript--v1.png" height="20"/> JavaScript | Build responsive UI, interactive dashboards, and client-side logic.         |
 | **Database**        | <img src="https://img.icons8.com/fluency/48/000000/mysql-logo.png" height="20"/> MySQL                                                                                                                                                                               | Store users, logs, articles, and other structured data.                     |
-| **APIs**            | <img src="https://img.icons8.com/fluency/48/000000/openweathermap.png" height="20"/> OpenWeather<br><img src="https://img.icons8.com/fluency/48/000000/uv-index.png" height="20"/> OpenUV                                                                            | Fetch live weather and UV data for calculations and insights.               |
+| **APIs**            | <img src="https://img.shields.io/badge/OpenWeather-API-1DA1F2?logo=OpenWeather&logoColor=white" height="20"/> OpenWeather<br><img src="https://img.shields.io/badge/OpenUV-API-FF5733?logoColor=white" height="20"/> OpenUV
+                                                                         | Fetch live weather and UV data for calculations and insights.               |
 | **Data Libraries**  | <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Pandas_logo.svg" height="20"/> Pandas<br><img src="https://upload.wikimedia.org/wikipedia/commons/3/31/NumPy_logo_2020.svg" height="20"/> NumPy                                                        | Perform numerical computations, data manipulation, and analytics.           |
-| **Template Engine** | <img src="https://img.icons8.com/color/48/000000/jinja.png" height="20"/> Jinja2                                                                                                                                                                                     | Render dynamic HTML templates for Flask routes.                             |
+| **Template Engine** | <img src="https://raw.githubusercontent.com/pallets/jinja/main/docs/_static/jinja.png" height="20"/> Jinja2                                                                                                                                                                                    | Render dynamic HTML templates for Flask routes.                             |
 | **Version Control** | <img src="https://img.icons8.com/color/48/000000/git.png" height="20"/> Git<br><img src="https://img.icons8.com/ios-glyphs/30/github.png" height="20"/> GitHub                                                                                                       | Track code changes and manage collaborative development.                    |
 
 ---
@@ -319,4 +320,10 @@ How to contribute:
 ---
 
 ### 📜 License
+
+### License
+
+This project is licensed under the **[GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)** (GPL-3.0).
+---
+
 
